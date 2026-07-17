@@ -1,0 +1,8 @@
+{
+  "name": "goldenwest-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Golden West Corporation — wholesale car wash chemical catalog + lead capture",
+  "type": "module",
+  "engines": { "node": ">=18" }
+}

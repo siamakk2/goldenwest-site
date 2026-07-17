@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Golden West — Product Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{--navy:#0B2A45;--water:#1E7FB8;--amber:#E0A83A;--amber-dk:#C08A22;--line:#D7E1E8;--paper:#EEF3F6;--muted:#5C6E7A;--ink:#12212E;
+    --font-d:"Barlow Semi Condensed",system-ui,sans-serif;--font-b:"IBM Plex Sans",system-ui,sans-serif}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font-b);color:var(--ink);background:var(--paper)}
+  h1,h2,h3{font-family:var(--font-d);margin:0;letter-spacing:-.01em}
+  button{font-family:var(--font-d);font-weight:600;cursor:pointer;border-radius:9px;border:1.5px solid transparent;padding:.6em 1.1em;font-size:.98rem;transition:.15s}
+  .btn-amber{background:var(--amber);color:var(--navy)} .btn-amber:hover{background:var(--amber-dk)}
+  .btn-navy{background:var(--navy);color:#fff} .btn-navy:hover{opacity:.9}
+  .btn-ghost{background:#fff;border-color:var(--line);color:var(--navy)} .btn-ghost:hover{border-color:var(--water)}
+  .btn-danger{background:#fff;border-color:#e6b3b3;color:#a12626} .btn-danger:hover{background:#fdecec}
+  input,select,textarea{font-family:var(--font-b);font-size:.95rem;width:100%;border:1.5px solid var(--line);border-radius:9px;padding:.6em .7em;background:#fff}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--water);box-shadow:0 0 0 3px rgba(30,127,184,.15)}
+  label{font-family:var(--font-d);font-weight:600;font-size:.9rem;color:var(--navy);display:block;margin:0 0 4px}
+  header{background:var(--navy);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:10}
+  header .mark{width:32px;height:32px}
+  header b{font-family:var(--font-d);font-size:1.25rem}
+  header .sp{margin-left:auto;display:flex;align-items:center;gap:14px}
+  header .who{font-size:.85rem;color:#c8d6e0}
+  .wrap{max-width:1080px;margin:0 auto;padding:22px}
+  /* login */
+  .login{max-width:380px;margin:9vh auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:34px;box-shadow:0 12px 40px -18px rgba(11,42,69,.3)}
+  .login h2{color:var(--navy);font-size:1.5rem;margin-bottom:6px}
+  .login p{color:var(--muted);font-size:.92rem;margin:0 0 20px}
+  .login .field{margin-bottom:14px}
+  .msg{border-radius:9px;padding:10px 12px;font-size:.9rem;margin-top:12px;display:none}
+  .msg.err{display:block;background:#fdecec;border:1px solid #f3c3c3;color:#a12626}
+  .msg.ok{display:block;background:#e8f5ec;border:1px solid #b7dfc3;color:#1c6b39}
+  /* toolbar */
+  .bar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .bar h2{color:var(--navy);font-size:1.4rem}
+  .bar .count{font-family:var(--font-b);color:var(--muted);font-size:.9rem}
+  .bar .right{margin-left:auto;display:flex;gap:8px}
+  .search{max-width:240px}
+  /* table */
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--line);font-size:.92rem;vertical-align:middle}
+  th{font-family:var(--font-d);color:var(--navy);background:#f7fafb;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em}
+  tr:last-child td{border-bottom:0}
+  .thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;background:var(--paper);border:1px solid var(--line)}
+  .thumb.ph{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:1.2rem}
+  .pill{font-family:var(--font-b);font-size:.72rem;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .pill.on{background:#e8f5ec;border-color:#b7dfc3;color:#1c6b39}
+  .pill.off{background:#f4f4f4}
+  .rowbtns{display:flex;gap:6px;justify-content:flex-end}
+  .rowbtns button{padding:.35em .7em;font-size:.85rem}
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(11,42,69,.5);display:none;align-items:flex-start;justify-content:center;z-index:20;overflow:auto;padding:30px 16px}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:16px;width:100%;max-width:640px;padding:26px;box-shadow:0 20px 60px -20px rgba(0,0,0,.5)}
+  .modal h3{color:var(--navy);font-size:1.35rem;margin-bottom:16px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .field{margin-bottom:12px}
+  .full{grid-column:1/-1}
+  .imgrow{display:flex;align-items:center;gap:12px}
+  .imgprev{width:64px;height:64px;border-radius:9px;object-fit:cover;border:1px solid var(--line);background:var(--paper)}
+  .modal .actions{display:flex;gap:10px;margin-top:18px}
+  .modal .actions .sp{margin-left:auto}
+  .hint{font-size:.8rem;color:var(--muted);margin-top:3px}
+  .cfgwarn{background:#fff7e6;border:1px solid #f0d48a;color:#7a5a12;border-radius:12px;padding:16px 18px;margin:18px auto;max-width:640px;font-size:.92rem;line-height:1.5}
+  code{background:#eef3f6;padding:1px 5px;border-radius:4px;font-size:.85em}
+</style>
+</head>
+<body>
+
+<!-- ========================================================= -->
+<!--  CONFIG — paste your Supabase project values here.        -->
+<!--  Find them in Supabase → Project Settings → API.          -->
+<!-- ========================================================= -->
+<script>
+  window.GW_CONFIG = {
+    SUPABASE_URL:  "https://oxbklxjsbljpjzwpizip.supabase.co",       // e.g. https://xxxx.supabase.co
+    SUPABASE_ANON_KEY: "sb_publishable_2KY1gFQhNtDCask3gOTSkw_aggcMo3L"
+  };
+</script>
+
+<header>
+  <svg class="mark" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="9" fill="#E0A83A"/><path d="M20 7 L31 13 V27 L20 33 L9 27 V13 Z" fill="#0B2A45"/><path d="M20 14 c-4 4-6 6-6 9 a6 6 0 0 0 12 0 c0-3-2-5-6-9Z" fill="#1E7FB8"/></svg>
+  <b>Golden West · Product Admin</b>
+  <div class="sp" id="hdrRight" style="display:none">
+    <span class="who" id="whoami"></span>
+    <button class="btn-ghost" id="signout">Sign out</button>
+  </div>
+</header>
+
+<div id="cfgWarn" class="cfgwarn" style="display:none">
+  <b>Almost ready.</b> Add your Supabase <code>URL</code> and <code>anon key</code> at the top of this file
+  (in the <code>GW_CONFIG</code> block), then reload. Claude sets these automatically when the project is provisioned.
+</div>
+
+<!-- login view -->
+<div id="loginView" class="login" style="display:none">
+  <h2>Staff sign in</h2>
+  <p>Sign in to manage Golden West products.</p>
+  <div class="field"><label>Email</label><input id="li_email" type="email" autocomplete="username" /></div>
+  <div class="field"><label>Password</label><input id="li_pass" type="password" autocomplete="current-password" /></div>
+  <button class="btn-amber" id="loginBtn" style="width:100%">Sign in</button>
+  <div class="msg" id="loginMsg"></div>
+</div>
+
+<!-- admin view -->
+<div id="adminView" class="wrap" style="display:none">
+  <div class="bar">
+    <h2>Products</h2><span class="count" id="count"></span>
+    <div class="right">
+      <input class="search" id="search" placeholder="Search products…" />
+      <button class="btn-amber" id="addBtn">+ Add product</button>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th></th><th>Name</th><th>Category</th><th>Brand</th><th>Sizes</th><th>Status</th><th></th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div class="msg" id="listMsg"></div>
+</div>
+
+<!-- edit modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="modalTitle">Add product</h3>
+    <input type="hidden" id="f_id" />
+    <div class="grid2">
+      <div class="field full"><label>Image</label>
+        <div class="imgrow">
+          <img class="imgprev" id="f_imgprev" alt="" />
+          <div style="flex:1">
+            <input type="file" id="f_imgfile" accept="image/*" />
+            <div class="hint" id="f_imgstatus">JPG or PNG. Uploads to your storage automatically.</div>
+          </div>
+        </div>
+        <input type="hidden" id="f_image_url" />
+      </div>
+      <div class="field"><label>Name (English)</label><input id="f_name_en" /></div>
+      <div class="field"><label>Name (Español)</label><input id="f_name_es" /></div>
+      <div class="field"><label>Category</label><select id="f_category"></select></div>
+      <div class="field"><label>Brand</label><input id="f_brand" value="Golden West" /></div>
+      <div class="field full"><label>Description (English)</label><textarea id="f_desc_en" rows="2"></textarea></div>
+      <div class="field full"><label>Description (Español)</label><textarea id="f_desc_es" rows="2"></textarea></div>
+      <div class="field"><label>Sizes (comma-separated)</label><input id="f_sizes" placeholder="5 gal, 55 gal drum" /></div>
+      <div class="field"><label>Tag (optional)</label><input id="f_tag" placeholder="Best seller" /></div>
+      <div class="field"><label>Sort order</label><input id="f_sort" type="number" value="0" /></div>
+      <div class="field"><label>Options</label>
+        <label style="font-weight:400;font-size:.9rem"><input type="checkbox" id="f_sds" style="width:auto" /> SDS available</label>
+        <label style="font-weight:400;font-size:.9rem"><input type="checkbox" id="f_active" style="width:auto" checked /> Active (visible on site)</label>
+      </div>
+    </div>
+    <div class="msg" id="modalMsg"></div>
+    <div class="actions">
+      <button class="btn-danger" id="deleteBtn" style="display:none">Delete</button>
+      <span class="sp"></span>
+      <button class="btn-ghost" id="cancelBtn">Cancel</button>
+      <button class="btn-amber" id="saveBtn">Save product</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function () {
+  const cfg = window.GW_CONFIG || {};
+  const configured = cfg.SUPABASE_URL && !cfg.SUPABASE_URL.startsWith("PASTE") &&
+                     cfg.SUPABASE_ANON_KEY && !cfg.SUPABASE_ANON_KEY.startsWith("PASTE");
+  const $ = (s) => document.querySelector(s);
+
+  if (!configured) { $("#cfgWarn").style.display = "block"; return; }
+
+  const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+  let categories = [], products = [], editing = null;
+
+  const show = (el, on) => ($(el).style.display = on ? "" : "none");
+  const flash = (el, kind, text) => { const m = $(el); m.className = "msg " + kind; m.textContent = text; };
+
+  // ---- auth ----
+  async function refresh() {
+    const { data } = await sb.auth.getSession();
+    const session = data.session;
+    if (session) { enterAdmin(session.user); } else { showLogin(); }
+  }
+  function showLogin() { show("#loginView", true); show("#adminView", false); show("#hdrRight", false); }
+  async function enterAdmin(user) {
+    show("#loginView", false); show("#adminView", true); show("#hdrRight", true);
+    $("#whoami").textContent = user.email;
+    await loadCategories(); await loadProducts();
+  }
+
+  $("#loginBtn").addEventListener("click", async () => {
+    const email = $("#li_email").value.trim(), password = $("#li_pass").value;
+    if (!email || !password) return flash("#loginMsg", "err", "Enter email and password.");
+    $("#loginBtn").disabled = true;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    $("#loginBtn").disabled = false;
+    if (error) return flash("#loginMsg", "err", error.message);
+    refresh();
+  });
+  $("#li_pass").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#loginBtn").click(); });
+  $("#signout").addEventListener("click", async () => { await sb.auth.signOut(); showLogin(); });
+
+  // ---- data ----
+  async function loadCategories() {
+    const { data } = await sb.from("categories").select("*").order("sort");
+    categories = data || [];
+    $("#f_category").innerHTML = categories.map((c) => `<option value="${c.id}">${c.name_en}</option>`).join("");
+  }
+  async function loadProducts() {
+    const { data, error } = await sb.from("products").select("*").order("sort_order").order("name_en");
+    if (error) return flash("#listMsg", "err", error.message);
+    products = data || [];
+    renderRows();
+  }
+  const catName = (id) => (categories.find((c) => c.id === id) || {}).name_en || "—";
+
+  function renderRows() {
+    const q = $("#search").value.trim().toLowerCase();
+    const list = products.filter((p) => !q || (p.name_en || "").toLowerCase().includes(q) || (p.brand || "").toLowerCase().includes(q));
+    $("#count").textContent = `${list.length} of ${products.length}`;
+    $("#rows").innerHTML = list.map((p) => `
+      <tr>
+        <td>${p.image_url ? `<img class="thumb" src="${p.image_url}" alt="">` : `<div class="thumb ph">▤</div>`}</td>
+        <td><b>${escapeHtml(p.name_en || "")}</b></td>
+        <td>${escapeHtml(catName(p.category_id))}</td>
+        <td>${escapeHtml(p.brand || "")}</td>
+        <td>${(p.sizes || []).length} sizes</td>
+        <td><span class="pill ${p.active ? "on" : "off"}">${p.active ? "Live" : "Hidden"}</span></td>
+        <td><div class="rowbtns"><button class="btn-ghost" data-edit="${p.id}">Edit</button></div></td>
+      </tr>`).join("");
+    document.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => openModal(b.dataset.edit)));
+  }
+
+  // ---- modal ----
+  function openModal(id) {
+    editing = id ? products.find((p) => p.id === id) : null;
+    $("#modalTitle").textContent = editing ? "Edit product" : "Add product";
+    $("#deleteBtn").style.display = editing ? "" : "none";
+    const p = editing || { brand: "Golden West", sizes: [], sds: false, active: true, sort_order: 0 };
+    $("#f_id").value = editing ? p.id : "";
+    $("#f_name_en").value = p.name_en || ""; $("#f_name_es").value = p.name_es || "";
+    $("#f_category").value = p.category_id || (categories[0] && categories[0].id) || "";
+    $("#f_brand").value = p.brand || "Golden West";
+    $("#f_desc_en").value = p.desc_en || ""; $("#f_desc_es").value = p.desc_es || "";
+    $("#f_sizes").value = (p.sizes || []).join(", ");
+    $("#f_tag").value = p.tag || ""; $("#f_sort").value = p.sort_order ?? 0;
+    $("#f_sds").checked = !!p.sds; $("#f_active").checked = p.active !== false;
+    $("#f_image_url").value = p.image_url || "";
+    $("#f_imgprev").src = p.image_url || "";
+    $("#f_imgstatus").textContent = "JPG or PNG. Uploads to your storage automatically.";
+    $("#modalMsg").className = "msg";
+    $("#overlay").classList.add("show");
+  }
+  const closeModal = () => $("#overlay").classList.remove("show");
+  $("#cancelBtn").addEventListener("click", closeModal);
+  $("#addBtn").addEventListener("click", () => openModal(null));
+  $("#search").addEventListener("input", renderRows);
+
+  // image upload
+  $("#f_imgfile").addEventListener("change", async (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    $("#f_imgstatus").textContent = "Uploading…";
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `${(slugify($("#f_name_en").value) || "product")}-${Date.now()}.${ext}`;
+    const { error } = await sb.storage.from("product-images").upload(path, file, { upsert: true, contentType: file.type });
+    if (error) { $("#f_imgstatus").textContent = "Upload failed: " + error.message; return; }
+    const { data } = sb.storage.from("product-images").getPublicUrl(path);
+    $("#f_image_url").value = data.publicUrl; $("#f_imgprev").src = data.publicUrl;
+    $("#f_imgstatus").textContent = "Uploaded ✓";
+  });
+
+  $("#saveBtn").addEventListener("click", async () => {
+    const name_en = $("#f_name_en").value.trim();
+    if (!name_en) return flash("#modalMsg", "err", "Name (English) is required.");
+    const row = {
+      slug: editing ? editing.slug : slugify(name_en) + "-" + Math.random().toString(36).slice(2, 6),
+      category_id: $("#f_category").value,
+      brand: $("#f_brand").value.trim() || "Golden West",
+      name_en, name_es: $("#f_name_es").value.trim() || null,
+      desc_en: $("#f_desc_en").value.trim() || null, desc_es: $("#f_desc_es").value.trim() || null,
+      sizes: $("#f_sizes").value.split(",").map((s) => s.trim()).filter(Boolean),
+      sds: $("#f_sds").checked, tag: $("#f_tag").value.trim() || null,
+      sort_order: parseInt($("#f_sort").value, 10) || 0,
+      active: $("#f_active").checked, image_url: $("#f_image_url").value || null,
+    };
+    $("#saveBtn").disabled = true;
+    let error;
+    if (editing) ({ error } = await sb.from("products").update(row).eq("id", editing.id));
+    else ({ error } = await sb.from("products").insert(row));
+    $("#saveBtn").disabled = false;
+    if (error) return flash("#modalMsg", "err", error.message);
+    closeModal(); await loadProducts();
+  });
+
+  $("#deleteBtn").addEventListener("click", async () => {
+    if (!editing || !confirm(`Delete "${editing.name_en}"? This can't be undone.`)) return;
+    const { error } = await sb.from("products").delete().eq("id", editing.id);
+    if (error) return flash("#modalMsg", "err", error.message);
+    closeModal(); await loadProducts();
+  });
+
+  // ---- utils ----
+  function slugify(s) { return (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+  refresh();
+})();
+</script>
+</body>
+</html>
