@@ -31,9 +31,22 @@
   .p-paid{background:#e8f5ec;color:#1c6b39} .p-fulfilled{background:#e6f0f7;color:#166;} .p-cancelled{background:#eee;color:#666}
   .msg{padding:11px 13px;border-radius:9px;margin:10px 0;display:none}
   .msg.err{display:block;background:#fdecec;border:1px solid #f3c3c3;color:#a12626}
+  .msg.ok{display:block;background:#e8f5ec;border:1px solid #b9e0c6;color:#1c6b39}
   .muted{color:var(--muted);font-size:.85rem}
   h2{font-family:"Barlow Semi Condensed";color:var(--navy);margin:0 0 4px}
   .items{font-family:"IBM Plex Mono";font-size:.8rem;color:var(--muted);white-space:pre-line}
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .toolbar .search{flex:1;min-width:200px;border:1.5px solid var(--line);border-radius:9px;padding:.55em .8em;font-size:.95rem}
+  .prod{display:grid;grid-template-columns:1.5fr .7fr auto;gap:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;align-items:start}
+  .prod label{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:8px 0 2px;font-family:"Barlow Semi Condensed"}
+  .prod input.pin,.prod textarea.pin{width:100%;border:1.5px solid var(--line);border-radius:7px;padding:.4em .5em;font-size:.86rem;font-family:"IBM Plex Sans"}
+  .prod textarea.pin{resize:vertical;min-height:36px;font-size:.8rem}
+  .prod .sm{width:84px}
+  .prod .meta{font-family:"IBM Plex Mono";font-size:.72rem;color:var(--muted);margin-top:4px}
+  .prod .in{display:flex;align-items:center;gap:4px}
+  .prod .act{display:flex;flex-direction:column;gap:8px;min-width:118px}
+  .tog{display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer;user-select:none}
+  .tog input{width:16px;height:16px}
 </style>
 </head>
 <body>
@@ -51,11 +64,16 @@
 
 <div id="appView" class="wrap" style="display:none">
   <div class="tabs">
-    <button data-tab="requests" class="on">Wholesale requests <span id="reqN"></span></button>
+    <button data-tab="products" class="on">Products</button>
+    <button data-tab="requests">Wholesale requests <span id="reqN"></span></button>
     <button data-tab="orders">Orders <span id="ordN"></span></button>
   </div>
   <div class="msg" id="amsg"></div>
-  <div id="requests"></div>
+  <div id="products">
+    <div class="toolbar"><input class="search" id="prodSearch" placeholder="Search products by name or SKU…"><span class="muted" id="prodCount"></span></div>
+    <div id="prodList"><div class="muted" style="padding:16px 0">Loading products…</div></div>
+  </div>
+  <div id="requests" style="display:none"></div>
   <div id="orders" style="display:none"></div>
 </div>
 
@@ -85,11 +103,12 @@ async function enter(){
   const { data:{ session } } = await sb.auth.getSession();
   $("#who").textContent = session.user.email;
   $("#loginView").style.display="none"; $("#appView").style.display="block";
-  loadRequests(); loadOrders();
+  loadProducts(); loadRequests(); loadOrders();
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
-  const t=b.dataset.tab; $("#requests").style.display = t==="requests"?"block":"none"; $("#orders").style.display = t==="orders"?"block":"none";
+  const t=b.dataset.tab;
+  ["products","requests","orders"].forEach(k=>{ $("#"+k).style.display = (k===t)?"block":"none"; });
 });
 
 async function loadRequests(){
@@ -148,6 +167,66 @@ async function ordStatus(id,status){
   if(error) return showErr(error.message);
   loadOrders();
 }
+let PRODUCTS=[];
+const escA=(s)=>String(s==null?"":s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
+const priceOf=(p)=> (p.product_prices&&p.product_prices[0])?p.product_prices[0]:null;
+
+async function loadProducts(){
+  const { data, error } = await sb.from("products")
+    .select("id,slug,sku,name_en,name_es,desc_en,desc_es,active,sort_order,product_prices(price_cents,unit,min_order_qty,in_stock,currency)")
+    .order("sort_order");
+  if(error){ $("#prodList").innerHTML=`<div class="msg err">${esc(error.message)}</div>`; return; }
+  PRODUCTS = data||[];
+  $("#prodCount").textContent = PRODUCTS.length+" products";
+  renderProducts("");
+}
+function renderProducts(q){
+  q=(q||"").toLowerCase();
+  const list = PRODUCTS.filter(p=> !q || (p.name_en||"").toLowerCase().includes(q) || (p.name_es||"").toLowerCase().includes(q) || (p.sku||"").toLowerCase().includes(q));
+  if(!list.length){ $("#prodList").innerHTML=`<p class="muted">No matches.</p>`; return; }
+  $("#prodList").innerHTML = list.map(p=>{
+    const pr=priceOf(p); const dollars = pr ? (pr.price_cents/100).toFixed(2) : "";
+    return `<div class="prod" data-id="${p.id}">
+      <div>
+        <label>Name (EN)</label><input class="pin" data-f="name_en" value="${escA(p.name_en)}">
+        <label>Name (ES)</label><input class="pin" data-f="name_es" value="${escA(p.name_es)}">
+        <label>Description (EN)</label><textarea class="pin" data-f="desc_en">${esc(p.desc_en)}</textarea>
+        <label>Description (ES)</label><textarea class="pin" data-f="desc_es">${esc(p.desc_es)}</textarea>
+        <div class="meta">${esc(p.sku||"no SKU")} · ${esc(p.slug)}</div>
+      </div>
+      <div>
+        <label>Price</label><div class="in"><span>$</span><input class="pin sm" data-f="price" value="${dollars}" ${pr?"":"disabled"}></div>
+        <label>Unit</label><input class="pin" data-f="unit" value="${escA(pr?pr.unit:"")}" ${pr?"":"disabled"}>
+        <label>Min order qty</label><input class="pin sm" data-f="moq" value="${escA(pr?pr.min_order_qty:"")}" ${pr?"":"disabled"}>
+        ${pr?"":`<div class="meta" style="color:#a12626;margin-top:6px">no price set</div>`}
+      </div>
+      <div class="act">
+        <label class="tog"><input type="checkbox" data-f="active" ${p.active?"checked":""}> Active</label>
+        <label class="tog"><input type="checkbox" data-f="in_stock" ${(pr&&pr.in_stock)?"checked":""} ${pr?"":"disabled"}> In stock</label>
+        <button class="btn amber" data-save>Save</button>
+      </div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll("#prodList [data-save]").forEach(btn=>btn.onclick=()=>saveProduct(btn.closest(".prod")));
+}
+async function saveProduct(row){
+  const id=row.dataset.id, g=(f)=>row.querySelector(`[data-f="${f}"]`);
+  const btn=row.querySelector("[data-save]"); btn.disabled=true; btn.textContent="Saving…";
+  const pUpd={ name_en:g("name_en").value.trim(), name_es:g("name_es").value.trim(), desc_en:g("desc_en").value.trim(), desc_es:g("desc_es").value.trim(), active:g("active").checked };
+  const r1=await sb.from("products").update(pUpd).eq("id",id);
+  let r2={error:null}; const priceEl=g("price");
+  if(priceEl && !priceEl.disabled){
+    const cents=Math.round(parseFloat(priceEl.value||"0")*100);
+    r2=await sb.from("product_prices").update({ price_cents:isNaN(cents)?0:cents, unit:g("unit").value.trim(), min_order_qty:parseInt(g("moq").value||"1",10)||1, in_stock:g("in_stock").checked }).eq("product_id",id);
+  }
+  btn.disabled=false; btn.textContent="Save";
+  if(r1.error||r2.error){ showErr((r1.error||r2.error).message); return; }
+  const p=PRODUCTS.find(x=>x.id===id);
+  if(p){ Object.assign(p,pUpd); const pr=priceOf(p); if(pr&&priceEl&&!priceEl.disabled){ pr.price_cents=Math.round(parseFloat(priceEl.value||"0")*100); pr.unit=g("unit").value.trim(); pr.min_order_qty=parseInt(g("moq").value||"1",10)||1; pr.in_stock=g("in_stock").checked; } }
+  const m=$("#amsg"); m.className="msg ok"; m.textContent=`Saved “${pUpd.name_en}”.`; setTimeout(()=>{ if(m.className.includes("ok")) m.className="msg"; },3000);
+}
+document.addEventListener("input",(e)=>{ if(e.target && e.target.id==="prodSearch") renderProducts(e.target.value); });
+
 function showErr(t){ const m=$("#amsg"); m.className="msg err"; m.textContent=t; }
 boot();
 </script>
