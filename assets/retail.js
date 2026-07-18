@@ -44,7 +44,12 @@
     .rt-panel header{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
     .rt-panel header h3{font-family:var(--font-d);color:var(--navy);font-size:1.3rem}
     .rt-panel .x{background:none;border:0;font-size:1.5rem;cursor:pointer;color:var(--muted);line-height:1}
-    .rt-lines{flex:1;overflow:auto;padding:12px 20px}
+    .rt-lines{flex:1;overflow:auto;padding:12px 20px;display:flex;flex-direction:column}
+    .rt-continue{align-self:flex-start;background:none;border:0;color:var(--water);font-family:var(--font-b);font-weight:600;font-size:.92rem;cursor:pointer;padding:14px 0 4px}
+    .rt-continue:hover{text-decoration:underline}
+    .rt-reassure{margin-top:auto;padding-top:20px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:8px;color:var(--muted);font-size:.86rem}
+    .rt-reassure b{color:var(--navy);font-family:var(--font-d);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
+    .rt-reassure a{color:var(--water);font-weight:600}
     .rt-line{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
     .rt-line .nm{flex:1;font-size:.92rem;color:var(--navy);font-weight:600}
     .rt-line .nm small{display:block;color:var(--muted);font-weight:400;font-family:var(--font-m);font-size:.72rem}
@@ -153,15 +158,25 @@
       lines.innerHTML = `<div class="rt-empty">Your cart is empty.</div>`;
       foot.innerHTML = ""; return;
     }
-    lines.innerHTML = items.map(([k, c]) => `
-      <div class="rt-line" data-k="${esc(k)}">
-        <div class="nm">${esc(c.name)}<small>${c.size ? esc(c.size) + " · " : ""}${money(c.cents)} × ${c.qty}</small></div>
-        <div class="lp">${money(c.cents * c.qty)}</div>
-        <button class="rm" title="Remove">\u2715</button>
-      </div>`).join("");
+    lines.innerHTML =
+      '<div class="rt-items">' + items.map(([k, c]) => `
+        <div class="rt-line" data-k="${esc(k)}">
+          <div class="nm">${esc(c.name)}<small>${c.size ? esc(c.size) + " · " : ""}${money(c.cents)} × ${c.qty}</small></div>
+          <div class="lp">${money(c.cents * c.qty)}</div>
+          <button class="rm" title="Remove">\u2715</button>
+        </div>`).join("") + '</div>' +
+      '<button class="rt-continue" type="button">\u2039 Continue shopping</button>' +
+      '<div class="rt-reassure">' +
+        '<b>Golden West \u00b7 Gardena, CA</b>' +
+        '<span>\u2713 Manufactured in-house since 1990</span>' +
+        '<span>\u2713 Bulk &amp; wholesale pricing available</span>' +
+        '<span>Questions? <a href="tel:+13105380918">(310) 538-0918</a></span>' +
+      '</div>';
     lines.querySelectorAll(".rt-line .rm").forEach((b) => b.onclick = () => {
       delete cart[b.closest(".rt-line").dataset.k]; save(); renderHeader(); renderDrawer();
     });
+    const cont = lines.querySelector(".rt-continue");
+    if (cont) cont.onclick = closeDrawer;
     foot.innerHTML = `
       <div class="sum"><span>Subtotal</span><span>${money(subtotal())}</span></div>
       <div class="note">Taxes &amp; delivery calculated at confirmation. Free delivery within 50 mi on orders $500+.</div>
