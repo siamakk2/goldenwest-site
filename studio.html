@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Studio — Site Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{--navy:#0B2A45;--water:#1E7FB8;--amber:#E0A83A;--paper:#EEF3F6;--line:#D7E1E8;--muted:#5C6E7A;--ink:#12212E;--good:#1c6b39;--bad:#a12626}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"IBM Plex Sans",sans-serif;color:var(--ink);background:var(--paper)}
+  header.top{background:var(--navy);color:#fff;padding:16px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20}
+  header.top b{font-family:"Barlow Semi Condensed";font-size:1.35rem;letter-spacing:.02em}
+  header.top .tag{font-size:.82rem;color:#9db4c6;font-family:"IBM Plex Mono"}
+  header.top .sp{margin-left:auto;font-size:.88rem;color:#c8d6e0;display:flex;align-items:center;gap:12px}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px}
+  .btn{font-family:"Barlow Semi Condensed";font-weight:600;border:1.5px solid transparent;border-radius:9px;padding:.5em 1em;cursor:pointer;font-size:.95rem;text-decoration:none;display:inline-block}
+  .amber{background:var(--amber);color:var(--navy)} .water{background:var(--water);color:#fff}
+  .out{background:#fff;border-color:var(--line);color:var(--navy)} .red{background:#fff;border-color:#e7b4b4;color:var(--bad)}
+  .ghost{background:transparent;border-color:#3a5670;color:#cfe0ee}
+  .btn:disabled{opacity:.5;cursor:default}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+  .login{max-width:390px;margin:64px auto}
+  .login input{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:.7em .8em;margin:6px 0 12px;font-size:1rem}
+  h1,h2,h3{font-family:"Barlow Semi Condensed";color:var(--navy);margin:0}
+  h1{font-size:1.5rem;margin-bottom:2px}
+  .muted{color:var(--muted);font-size:.85rem}
+  .msg{padding:11px 13px;border-radius:9px;margin:10px 0;display:none;font-size:.9rem}
+  .msg.err{display:block;background:#fdecec;border:1px solid #f3c3c3;color:var(--bad)}
+  .msg.ok{display:block;background:#e8f5ec;border:1px solid #b9e0c6;color:var(--good)}
+  /* client tiles */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .tile{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px}
+  .tile.deep{border:1.5px solid var(--amber);box-shadow:0 2px 0 rgba(224,168,58,.25)}
+  .tile .row1{display:flex;align-items:flex-start;gap:10px}
+  .tile .nm{font-family:"Barlow Semi Condensed";font-weight:700;font-size:1.15rem;color:var(--navy);line-height:1.1}
+  .tile .kind{margin-left:auto;font-family:"IBM Plex Mono";font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:999px;background:var(--paper);color:var(--muted);white-space:nowrap}
+  .tile.deep .kind{background:#fbeecb;color:#8a6114}
+  .tile .links{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+  .tile .links a{font-size:.78rem;padding:.35em .7em}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+  .dot.live{background:#28a745} .dot.other{background:#c7942a}
+  /* console */
+  .tabs{display:flex;gap:8px;margin:4px 0 16px;flex-wrap:wrap}
+  .tabs button{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:.5em 1.1em;cursor:pointer;font-family:"Barlow Semi Condensed";font-weight:600;font-size:.9rem}
+  .tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:"Barlow Semi Condensed";color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+  .pill{font-family:"IBM Plex Mono";font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:999px}
+  .p-pending{background:#fff7e6;color:#8a6114} .p-approved{background:#e8f5ec;color:#1c6b39} .p-rejected{background:#fdecec;color:#a12626}
+  .p-paid{background:#e8f5ec;color:#1c6b39} .p-fulfilled{background:#e6f0f7;color:#14506e} .p-cancelled{background:#eee;color:#666}
+  .pinput{border:1.5px solid var(--line);border-radius:7px;padding:.4em .5em;font-size:.85rem;font-family:"IBM Plex Sans";width:100%}
+  .pinput.sm{width:78px}
+  textarea.pinput{resize:vertical;min-height:38px;font-size:.8rem}
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .toolbar input.search{flex:1;min-width:200px;border:1.5px solid var(--line);border-radius:9px;padding:.55em .8em;font-size:.95rem}
+  .prod{display:grid;grid-template-columns:1.4fr .7fr auto;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);align-items:start}
+  .prod .fields label{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:8px 0 2px;font-family:"Barlow Semi Condensed"}
+  .prod .meta{font-family:"IBM Plex Mono";font-size:.72rem;color:var(--muted);margin-top:2px}
+  .prod .price label{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:8px 0 2px;font-family:"Barlow Semi Condensed"}
+  .prod .price .in{display:flex;align-items:center;gap:4px}
+  .prod .price .in span{color:var(--muted)}
+  .prod .act{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:120px}
+  .tog{display:flex;align-items:center;gap:6px;font-size:.8rem;cursor:pointer;user-select:none}
+  .tog input{width:16px;height:16px}
+  .items{font-family:"IBM Plex Mono";font-size:.78rem;color:var(--muted);white-space:pre-line}
+  .linklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+  .linklist a{display:block;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:#fff;text-decoration:none;color:var(--navy)}
+  .linklist a b{font-family:"Barlow Semi Condensed";display:block}
+  .linklist a span{font-size:.76rem;color:var(--muted);font-family:"IBM Plex Mono";word-break:break-all}
+  .back{background:none;border:none;color:var(--water);cursor:pointer;font-size:.9rem;padding:0;margin-bottom:10px;font-family:"IBM Plex Sans"}
+  .loading{color:var(--muted);padding:20px 0}
+</style>
+</head>
+<body>
+<header class="top">
+  <b>Studio</b><span class="tag">site&nbsp;hub</span>
+  <span class="sp"><span id="who"></span><button class="btn ghost" id="logout" style="display:none">Sign out</button></span>
+</header>
+
+<!-- LOGIN -->
+<div id="loginView" class="login" style="display:none">
+  <div class="card">
+    <h2>Platform sign in</h2>
+    <p class="muted" style="margin:4px 0 14px">Restricted to the platform owner.</p>
+    <div class="msg" id="lmsg"></div>
+    <label class="muted">Email</label><input id="email" type="email" placeholder="you@example.com">
+    <label class="muted">Password</label><input id="pass" type="password">
+    <button class="btn amber" id="loginBtn" style="width:100%">Sign in</button>
+  </div>
+</div>
+
+<!-- HUB HOME -->
+<div id="hubView" class="wrap" style="display:none">
+  <h1>Your sites</h1>
+  <p class="muted" style="margin:2px 0 20px">Manage every client property from one place.</p>
+  <div class="msg" id="hmsg"></div>
+  <div class="grid" id="clientGrid"><div class="loading">Loading clients…</div></div>
+</div>
+
+<!-- CLIENT CONSOLE (deep) -->
+<div id="consoleView" class="wrap" style="display:none">
+  <button class="back" id="backBtn">← All sites</button>
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <h1 id="cName">Golden West</h1>
+    <a class="btn out" id="cVisit" target="_blank" rel="noopener" style="font-size:.8rem">Visit site ↗</a>
+  </div>
+  <div class="tabs" style="margin-top:14px">
+    <button data-tab="products" class="on">Products</button>
+    <button data-tab="approvals">Approvals <span id="apN"></span></button>
+    <button data-tab="orders">Orders <span id="orN"></span></button>
+    <button data-tab="links">Quick links</button>
+  </div>
+  <div class="msg" id="cmsg"></div>
+  <div id="tab-products">
+    <div class="toolbar">
+      <input class="search" id="prodSearch" placeholder="Search products by name or SKU…">
+      <span class="muted" id="prodCount"></span>
+    </div>
+    <div id="prodList"><div class="loading">Loading products…</div></div>
+  </div>
+  <div id="tab-approvals" style="display:none"></div>
+  <div id="tab-orders" style="display:none"></div>
+  <div id="tab-links" style="display:none"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/config.js"></script>
+<script>
+(function(){
+  var cfg = window.GW_CONFIG || {};
+  var sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+  var session = null, owner = false, clients = [], products = [];
+
+  var $ = function(id){ return document.getElementById(id); };
+  function show(el){ el.style.display=""; } function hide(el){ el.style.display="none"; }
+  function money(cents){ return "$" + ((cents||0)/100).toFixed(2); }
+  function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+  function flash(el, txt, kind){ el.textContent=txt; el.className="msg "+(kind||"ok"); setTimeout(function(){ if(el.className.indexOf("ok")>-1) el.className="msg"; }, 3500); }
+
+  /* ---------- AUTH ---------- */
+  async function boot(){
+    var r = await sb.auth.getSession();
+    session = r.data.session;
+    if(!session){ hide($("hubView")); hide($("consoleView")); show($("loginView")); return; }
+    var chk = await sb.rpc("is_platform_owner");
+    owner = chk.data === true;
+    if(!owner){
+      await sb.auth.signOut(); session=null;
+      show($("loginView"));
+      flash($("lmsg"), "This account isn't a platform owner.", "err");
+      return;
+    }
+    $("who").textContent = session.user.email;
+    show($("logout"));
+    hide($("loginView"));
+    openHub();
+  }
+
+  $("loginBtn").onclick = async function(){
+    var btn=this; btn.disabled=true; btn.textContent="Signing in…";
+    var e=$("email").value.trim().toLowerCase(), p=$("pass").value;
+    var res = await sb.auth.signInWithPassword({ email:e, password:p });
+    btn.disabled=false; btn.textContent="Sign in";
+    if(res.error){ flash($("lmsg"), res.error.message, "err"); return; }
+    boot();
+  };
+  $("email").addEventListener("keydown",function(ev){ if(ev.key==="Enter") $("pass").focus(); });
+  $("pass").addEventListener("keydown",function(ev){ if(ev.key==="Enter") $("loginBtn").click(); });
+  $("logout").onclick = async function(){ await sb.auth.signOut(); location.reload(); };
+
+  /* ---------- HUB HOME ---------- */
+  async function openHub(){
+    hide($("consoleView")); show($("hubView"));
+    var res = await sb.from("hub_clients").select("*").order("sort");
+    if(res.error){ flash($("hmsg"), res.error.message, "err"); return; }
+    clients = res.data || [];
+    renderClients();
+  }
+  function renderClients(){
+    var g=$("clientGrid");
+    if(!clients.length){ g.innerHTML='<p class="muted">No clients yet.</p>'; return; }
+    g.innerHTML = clients.map(function(c){
+      var deep = c.kind==="deep";
+      var dot = (c.status==="live")?"live":"other";
+      var links = [];
+      if(c.site_url) links.push('<a class="btn out" target="_blank" rel="noopener" href="'+esc(c.site_url)+'">Site ↗</a>');
+      if(c.repo_url) links.push('<a class="btn out" target="_blank" rel="noopener" href="'+esc(c.repo_url)+'">Repo ↗</a>');
+      if(c.vercel_url) links.push('<a class="btn out" target="_blank" rel="noopener" href="'+esc(c.vercel_url)+'">Live ↗</a>');
+      var open = deep ? '<button class="btn amber" data-open="'+esc(c.id)+'" style="font-size:.82rem">Open console →</button>' : '';
+      return '<div class="tile'+(deep?' deep':'')+'">'+
+        '<div class="row1"><div><div class="nm">'+esc(c.name)+'</div>'+
+        '<div class="muted" style="margin-top:3px"><span class="dot '+dot+'"></span>'+esc(c.status)+'</div></div>'+
+        '<span class="kind">'+(deep?'Managed':'Launcher')+'</span></div>'+
+        '<div class="links">'+open+links.join("")+'</div></div>';
+    }).join("");
+    Array.prototype.forEach.call(g.querySelectorAll("[data-open]"), function(b){
+      b.onclick=function(){ openConsole(b.getAttribute("data-open")); };
+    });
+  }
+
+  /* ---------- CONSOLE ---------- */
+  var current=null;
+  async function openConsole(id){
+    current = clients.filter(function(c){return c.id===id;})[0];
+    if(!current) return;
+    hide($("hubView")); show($("consoleView"));
+    $("cName").textContent = current.name;
+    var visit=$("cVisit");
+    if(current.site_url){ visit.href=current.site_url; show(visit); } else hide(visit);
+    switchTab("products");
+    loadProducts(); loadApprovals(); loadOrders(); buildLinks();
+  }
+  $("backBtn").onclick = openHub;
+
+  Array.prototype.forEach.call(document.querySelectorAll(".tabs button[data-tab]"), function(b){
+    b.onclick=function(){ switchTab(b.getAttribute("data-tab")); };
+  });
+  function switchTab(t){
+    Array.prototype.forEach.call(document.querySelectorAll(".tabs button[data-tab]"), function(b){
+      b.className = (b.getAttribute("data-tab")===t)?"on":"";
+    });
+    ["products","approvals","orders","links"].forEach(function(k){
+      $("tab-"+k).style.display = (k===t)?"":"none";
+    });
+  }
+
+  /* ---- PRODUCTS ---- */
+  async function loadProducts(){
+    var res = await sb.from("products")
+      .select("id,slug,sku,name_en,name_es,desc_en,desc_es,active,sort_order,product_prices(price_cents,unit,min_order_qty,in_stock,currency)")
+      .order("sort_order");
+    if(res.error){ $("prodList").innerHTML='<p class="msg err">'+esc(res.error.message)+'</p>'; return; }
+    products = res.data || [];
+    $("prodCount").textContent = products.length + " products";
+    renderProducts("");
+  }
+  function priceOf(p){ return (p.product_prices && p.product_prices[0]) ? p.product_prices[0] : null; }
+  function renderProducts(q){
+    q=(q||"").toLowerCase();
+    var list = products.filter(function(p){
+      if(!q) return true;
+      return (p.name_en||"").toLowerCase().indexOf(q)>-1 || (p.sku||"").toLowerCase().indexOf(q)>-1 || (p.name_es||"").toLowerCase().indexOf(q)>-1;
+    });
+    var el=$("prodList");
+    if(!list.length){ el.innerHTML='<p class="muted">No matches.</p>'; return; }
+    el.innerHTML = list.map(function(p){
+      var pr = priceOf(p);
+      var dollars = pr ? (pr.price_cents/100).toFixed(2) : "";
+      return '<div class="prod" data-id="'+esc(p.id)+'">'+
+        '<div class="fields">'+
+          '<label>Name (EN)</label><input class="pinput" data-f="name_en" value="'+esc(p.name_en)+'">'+
+          '<label>Name (ES)</label><input class="pinput" data-f="name_es" value="'+esc(p.name_es)+'">'+
+          '<label>Description (EN)</label><textarea class="pinput" data-f="desc_en">'+esc(p.desc_en)+'</textarea>'+
+          '<label>Description (ES)</label><textarea class="pinput" data-f="desc_es">'+esc(p.desc_es)+'</textarea>'+
+          '<div class="meta">'+esc(p.sku||"no SKU")+' · '+esc(p.slug)+'</div>'+
+        '</div>'+
+        '<div class="price">'+
+          '<label>Price</label><div class="in"><span>$</span><input class="pinput sm" data-f="price" value="'+dollars+'" '+(pr?"":"disabled")+'></div>'+
+          '<label>Unit</label><input class="pinput" data-f="unit" value="'+esc(pr?pr.unit:"")+'" '+(pr?"":"disabled")+'>'+
+          '<label>Min order qty</label><input class="pinput sm" data-f="moq" value="'+esc(pr?pr.min_order_qty:"")+'" '+(pr?"":"disabled")+'>'+
+          (pr?"":'<div class="meta" style="margin-top:6px;color:#a12626">no price row</div>')+
+        '</div>'+
+        '<div class="act">'+
+          '<label class="tog"><input type="checkbox" data-f="active" '+(p.active?"checked":"")+'> Active</label>'+
+          '<label class="tog"><input type="checkbox" data-f="in_stock" '+((pr&&pr.in_stock)?"checked":"")+' '+(pr?"":"disabled")+'> In stock</label>'+
+          '<button class="btn amber" data-save>Save</button>'+
+        '</div>'+
+      '</div>';
+    }).join("");
+    Array.prototype.forEach.call(el.querySelectorAll("[data-save]"), function(btn){
+      btn.onclick=function(){ saveProduct(btn.closest(".prod")); };
+    });
+  }
+  $("prodSearch").addEventListener("input", function(){ renderProducts(this.value); });
+
+  async function saveProduct(row){
+    var id=row.getAttribute("data-id");
+    var g=function(f){ return row.querySelector('[data-f="'+f+'"]'); };
+    var btn=row.querySelector("[data-save]"); btn.disabled=true; btn.textContent="Saving…";
+    var pUpd = {
+      name_en: g("name_en").value.trim(),
+      name_es: g("name_es").value.trim(),
+      desc_en: g("desc_en").value.trim(),
+      desc_es: g("desc_es").value.trim(),
+      active: g("active").checked
+    };
+    var r1 = await sb.from("products").update(pUpd).eq("id", id);
+    var r2 = { error:null };
+    var priceEl=g("price");
+    if(priceEl && !priceEl.disabled){
+      var cents = Math.round(parseFloat(priceEl.value||"0")*100);
+      var prUpd = {
+        price_cents: isNaN(cents)?0:cents,
+        unit: g("unit").value.trim(),
+        min_order_qty: parseInt(g("moq").value||"1",10)||1,
+        in_stock: g("in_stock").checked
+      };
+      r2 = await sb.from("product_prices").update(prUpd).eq("product_id", id);
+    }
+    btn.disabled=false; btn.textContent="Save";
+    if(r1.error||r2.error){ flash($("cmsg"), (r1.error||r2.error).message, "err"); return; }
+    // update local cache
+    var p = products.filter(function(x){return x.id===id;})[0];
+    if(p){ p.name_en=pUpd.name_en; p.name_es=pUpd.name_es; p.desc_en=pUpd.desc_en; p.desc_es=pUpd.desc_es; p.active=pUpd.active;
+      var pr=priceOf(p); if(pr&&priceEl&&!priceEl.disabled){ pr.price_cents=Math.round(parseFloat(priceEl.value||"0")*100); pr.unit=g("unit").value.trim(); pr.min_order_qty=parseInt(g("moq").value||"1",10)||1; pr.in_stock=g("in_stock").checked; } }
+    flash($("cmsg"), "Saved “"+pUpd.name_en+"”.", "ok");
+  }
+
+  /* ---- APPROVALS ---- */
+  async function loadApprovals(){
+    var res = await sb.from("wholesale_accounts").select("*").order("created_at",{ascending:false});
+    var el=$("tab-approvals");
+    if(res.error){ el.innerHTML='<p class="msg err">'+esc(res.error.message)+'</p>'; return; }
+    var rows=res.data||[];
+    var pending=rows.filter(function(r){return r.status==="pending";}).length;
+    $("apN").textContent = pending?("("+pending+")"):"";
+    if(!rows.length){ el.innerHTML='<div class="card"><p class="muted">No wholesale account requests yet.</p></div>'; return; }
+    el.innerHTML='<div class="card"><table><thead><tr><th>Business</th><th>Contact</th><th>Type</th><th>Location</th><th>Status</th><th></th></tr></thead><tbody>'+
+      rows.map(function(r){
+        var actions = r.status==="pending"
+          ? '<button class="btn water" data-appr="'+r.id+'">Approve</button> <button class="btn red" data-rej="'+r.id+'">Reject</button>'
+          : (r.status==="approved" ? '<button class="btn red" data-rev="'+r.id+'">Revoke</button>' : '<button class="btn out" data-appr="'+r.id+'">Approve</button>');
+        return '<tr><td><b>'+esc(r.business_name)+'</b><div class="muted">'+esc(r.email)+'</div></td>'+
+          '<td>'+esc(r.contact_name||"—")+'<div class="muted">'+esc(r.phone||"")+'</div></td>'+
+          '<td>'+esc(r.business_type||"—")+'</td>'+
+          '<td>'+esc(r.city_state||"")+' '+esc(r.zip||"")+'</td>'+
+          '<td><span class="pill p-'+esc(r.status)+'">'+esc(r.status)+'</span></td>'+
+          '<td style="white-space:nowrap">'+actions+'</td></tr>';
+      }).join("")+'</tbody></table></div>';
+    wireAcct(el);
+  }
+  function wireAcct(el){
+    Array.prototype.forEach.call(el.querySelectorAll("[data-appr]"),function(b){ b.onclick=function(){ setAcct(b.getAttribute("data-appr"),"approved"); }; });
+    Array.prototype.forEach.call(el.querySelectorAll("[data-rej]"),function(b){ b.onclick=function(){ setAcct(b.getAttribute("data-rej"),"rejected"); }; });
+    Array.prototype.forEach.call(el.querySelectorAll("[data-rev]"),function(b){ b.onclick=function(){ setAcct(b.getAttribute("data-rev"),"rejected"); }; });
+  }
+  async function setAcct(id,status){
+    var patch={status:status}; if(status==="approved") patch.approved_at=new Date().toISOString();
+    var res=await sb.from("wholesale_accounts").update(patch).eq("id",id);
+    if(res.error){ flash($("cmsg"),res.error.message,"err"); return; }
+    flash($("cmsg"),"Account "+status+".","ok"); loadApprovals();
+  }
+
+  /* ---- ORDERS ---- */
+  async function loadOrders(){
+    var res = await sb.from("orders")
+      .select("*, wholesale_accounts(business_name,email), order_items(product_name,sku,qty,unit_price_cents)")
+      .order("created_at",{ascending:false});
+    var el=$("tab-orders");
+    if(res.error){ el.innerHTML='<p class="msg err">'+esc(res.error.message)+'</p>'; return; }
+    var rows=res.data||[];
+    var open=rows.filter(function(r){return r.status==="pending";}).length;
+    $("orN").textContent = open?("("+open+")"):"";
+    if(!rows.length){ el.innerHTML='<div class="card"><p class="muted">No orders yet.</p></div>'; return; }
+    el.innerHTML='<div class="card"><table><thead><tr><th>Order</th><th>Buyer</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>'+
+      rows.map(function(o){
+        var acct=o.wholesale_accounts||{};
+        var items=(o.order_items||[]).map(function(i){ return i.qty+"× "+i.product_name+" ("+money(i.unit_price_cents)+")"; }).join("\n");
+        var when=new Date(o.created_at).toLocaleDateString();
+        var actions='';
+        if(o.status==="pending") actions='<button class="btn water" data-paid="'+o.id+'">Mark paid</button> <button class="btn red" data-cxl="'+o.id+'">Cancel</button>';
+        else if(o.status==="paid") actions='<button class="btn amber" data-ful="'+o.id+'">Fulfilled</button>';
+        return '<tr><td><b>#'+String(o.id).slice(0,8)+'</b><div class="muted">'+when+(o.po_number?(' · PO '+esc(o.po_number)):"")+'</div></td>'+
+          '<td>'+esc(acct.business_name||"—")+'<div class="muted">'+esc(acct.email||"")+'</div></td>'+
+          '<td class="items">'+esc(items)+'</td>'+
+          '<td><b>'+money(o.subtotal_cents)+'</b></td>'+
+          '<td><span class="pill p-'+esc(o.status)+'">'+esc(o.status)+'</span></td>'+
+          '<td style="white-space:nowrap">'+actions+'</td></tr>';
+      }).join("")+'</tbody></table></div>';
+    Array.prototype.forEach.call(el.querySelectorAll("[data-paid]"),function(b){ b.onclick=function(){ setOrder(b.getAttribute("data-paid"),"paid"); }; });
+    Array.prototype.forEach.call(el.querySelectorAll("[data-ful]"),function(b){ b.onclick=function(){ setOrder(b.getAttribute("data-ful"),"fulfilled"); }; });
+    Array.prototype.forEach.call(el.querySelectorAll("[data-cxl]"),function(b){ b.onclick=function(){ setOrder(b.getAttribute("data-cxl"),"cancelled"); }; });
+  }
+  async function setOrder(id,status){
+    var res=await sb.from("orders").update({status:status}).eq("id",id);
+    if(res.error){ flash($("cmsg"),res.error.message,"err"); return; }
+    flash($("cmsg"),"Order "+status+".","ok"); loadOrders();
+  }
+
+  /* ---- LINKS ---- */
+  function buildLinks(){
+    var c=current||{};
+    var out=[];
+    if(c.site_url) out.push(["Live site", c.site_url, c.site_url]);
+    out.push(["Wholesale admin", (c.site_url||"")+"/admin", "Client-facing owner console"]);
+    if(c.repo_url) out.push(["GitHub repo", c.repo_url, c.repo_url]);
+    out.push(["Vercel dashboard", "https://vercel.com/dashboard", "Deployments & domains"]);
+    out.push(["Supabase project", "https://supabase.com/dashboard/project/"+ (c.supabase_ref||"oxbklxjsbljpjzwpizip"), "Database, auth & functions"]);
+    $("tab-links").innerHTML='<div class="card"><div class="linklist">'+
+      out.map(function(l){ return '<a target="_blank" rel="noopener" href="'+esc(l[1])+'"><b>'+esc(l[0])+'</b><span>'+esc(l[2])+'</span></a>'; }).join("")+
+    '</div></div>';
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
