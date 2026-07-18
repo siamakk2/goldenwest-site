@@ -344,4 +344,7 @@
     sb.auth.onAuthStateChange((_e, s) => { session = s; });
     await loadAccount();
   });
+
+  // expose modal openers so in-page buttons (e.g. the Wholesale page) can trigger them
+  window.GW_WS = { openLogin: () => openModal("login"), openRequest: () => openModal("request") };
 })();

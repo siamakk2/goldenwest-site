@@ -84,7 +84,7 @@
 <!-- ============ HEADER ============ -->
 <header class="hdr">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Golden West Corporation home">
+    <a class="brand" href="/" aria-label="Golden West Corporation home">
       <svg class="mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
         <rect width="40" height="40" rx="9" fill="#E0A83A"/>
         <path d="M20 7 L31 13 V27 L20 33 L9 27 V13 Z" fill="#0B2A45"/>
@@ -92,12 +92,12 @@
       </svg>
       <span><b>Golden West</b><span>Since 1990</span></span>
     </a>
-    <nav class="nav" id="nav" aria-label="Primary">
-      <a href="#products" data-i18n="nav_products">Products</a>
-      <a href="#manufacturing" data-i18n="nav_manufacturing">Manufacturing</a>
-      <a href="#how" data-i18n="nav_delivery">Delivery</a>
-      <a href="#faq" data-i18n="nav_faq">FAQ</a>
-      <a href="#contact" data-i18n="nav_contact">Contact</a>
+        <nav class="nav" id="nav" aria-label="Primary">
+      <a href="/shop">Shop</a>
+      <a href="/wholesale">Wholesale</a>
+      <a href="/#manufacturing" data-i18n="nav_manufacturing">Manufacturing</a>
+      <a href="/#faq" data-i18n="nav_faq">FAQ</a>
+      <a href="/#contact" data-i18n="nav_contact">Contact</a>
     </nav>
     <div class="hdr-right">
       <a class="phone" href="tel:+13105380918">☎ (310) 538-0918</a>
@@ -105,7 +105,7 @@
         <button data-lang="en" class="on">EN</button>
         <button data-lang="es">ES</button>
       </div>
-      <a href="#quote" class="btn btn-amber" data-i18n="cta_pricing">Request Pricing</a>
+      <a href="/wholesale" class="btn btn-amber" data-i18n="cta_pricing">Request Pricing</a>
       <button class="burger" id="burger" aria-label="Menu">☰</button>
     </div>
   </div>
@@ -121,14 +121,14 @@
       <h1 data-i18n="hero_title">Car wash chemicals, made in Southern California.</h1>
       <p data-i18n="hero_sub">Wholesale soaps, waxes, compounds and supplies for car washes, express tunnels, and detailers — formulated and manufactured in Gardena since 1990.</p>
       <div class="hero-cta">
-        <a href="#quote" class="btn btn-amber" data-i18n="hero_cta1">Request wholesale pricing</a>
-        <a href="#products" class="btn btn-ghost" data-i18n="hero_cta2">Browse products</a>
+        <a href="/wholesale" class="btn btn-amber" data-i18n="hero_cta1">Request wholesale pricing</a>
+        <a href="/shop" class="btn btn-ghost" data-i18n="hero_cta2">Browse products</a>
       </div>
     </div>
-    <div class="labels" aria-hidden="true">
-      <div class="label l1"><span class="lg">Golden West · House line</span><b>Maxi-Foam Soap</b><div class="row"><span class="chip">5 gal</span><span class="chip">55 gal drum</span></div></div>
-      <div class="label l2"><span class="lg">Concentrated · Biodegradable</span><b>Touchless Soap</b><div class="row"><span class="chip">55 gal</span><span class="chip">275 gal tote</span></div></div>
-      <div class="label l3"><span class="lg">Finishing · Ceramic</span><b>Trim Shine</b><div class="row"><span class="chip">Kit</span><span class="chip">1 gal</span></div></div>
+    <div class="labels">
+      <a class="label l1" href="/shop" aria-label="Shop Maxi-Foam Soap"><span class="lg">Golden West · House line</span><b>Maxi-Foam Soap</b><div class="row"><span class="chip">5 gal</span><span class="chip">55 gal drum</span><span class="go">Shop &rarr;</span></div></a>
+      <a class="label l2" href="/shop" aria-label="Shop Touchless Soap"><span class="lg">Concentrated · Biodegradable</span><b>Touchless Soap</b><div class="row"><span class="chip">55 gal</span><span class="chip">275 gal tote</span><span class="go">Shop &rarr;</span></div></a>
+      <a class="label l3" href="/shop" aria-label="Shop Trim Shine"><span class="lg">Finishing · Ceramic</span><b>Trim Shine</b><div class="row"><span class="chip">Kit</span><span class="chip">1 gal</span><span class="go">Shop &rarr;</span></div></a>
     </div>
   </div>
 </section>
@@ -142,19 +142,6 @@
     <span><svg viewBox="0 0 24 24" fill="none" stroke="#0B2A45" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20a15 15 0 010-20"/></svg><span data-i18n="trust_4">English & Español service</span></span>
   </div>
 </div>
-
-<!-- ============ PRODUCTS ============ -->
-<section id="products">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow" data-i18n="nav_products">Products</p>
-      <h2 data-i18n="hero_cta2">Browse products</h2>
-      <p data-i18n="hero_sub">Wholesale soaps, waxes, compounds and supplies for car washes, express tunnels, and detailers.</p>
-    </div>
-    <div class="filters" id="filters"></div>
-    <div class="grid" id="grid"></div>
-  </div>
-</section>
 
 <!-- ============ HOW IT WORKS ============ -->
 <section id="how">
@@ -208,38 +195,6 @@
   </div>
 </section>
 
-<!-- ============ QUOTE FORM ============ -->
-<section id="quote">
-  <div class="wrap">
-    <div class="sec-head reveal" style="margin-inline:auto;text-align:center">
-      <p class="eyebrow" style="color:var(--amber-dk)" data-i18n="cta_pricing">Request Pricing</p>
-      <h2 data-i18n="form_title">Request wholesale pricing</h2>
-      <p data-i18n="form_sub">Tell us about your business and what you need.</p>
-    </div>
-    <div class="form-card reveal">
-      <form id="quoteForm" novalidate>
-        <div class="form-grid">
-          <div class="field"><label for="f_business">🅑 <span data-i18n="form_business">Business name</span><span class="req" data-i18n="req_label">Required</span></label><input id="f_business" name="business" required autocomplete="organization" /></div>
-          <div class="field"><label for="f_name" data-i18n="form_name">Your name</label><input id="f_name" name="name" autocomplete="name" /></div>
-          <div class="field"><label for="f_email"><span data-i18n="form_email">Email</span><span class="req" data-i18n="req_label">Required</span></label><input id="f_email" name="email" type="email" required autocomplete="email" /></div>
-          <div class="field"><label for="f_phone"><span data-i18n="form_phone">Phone</span><span class="req" data-i18n="req_label">Required</span></label><input id="f_phone" name="phone" type="tel" required autocomplete="tel" /></div>
-          <div class="field"><label for="f_type" data-i18n="form_type">Business type</label><select id="f_type" name="type"></select></div>
-          <div class="field"><label for="f_volume" data-i18n="form_volume">Estimated monthly volume</label><select id="f_volume" name="volume"></select></div>
-          <div class="field"><label for="f_city" data-i18n="form_city">City & State</label><input id="f_city" name="city" /></div>
-          <div class="field"><label for="f_zip"><span data-i18n="form_zip">Shipping ZIP</span><span class="req" data-i18n="req_label">Required</span></label><input id="f_zip" name="zip" required inputmode="numeric" autocomplete="postal-code" /></div>
-          <div class="field full"><label data-i18n="form_products">Products you're interested in</label><div class="picked" id="pickedList"></div></div>
-          <div class="field full"><input id="f_products" name="products" placeholder="+ type any other products…" /></div>
-          <div class="field full"><label for="f_message" data-i18n="form_message">Anything else? (optional)</label><textarea id="f_message" name="message"></textarea></div>
-          <div class="form-msg" id="formMsg"></div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-amber" id="submitBtn" data-i18n="form_submit">Send request</button>
-            <span class="form-note">☎ (310) 538-0918 · Español (310) 213-3171</span>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</section>
 
 </main>
 
@@ -247,7 +202,7 @@
 <footer class="ftr" id="contact">
   <div class="wrap">
     <div>
-      <a class="brand" href="#top" style="color:#fff;margin-bottom:14px">
+      <a class="brand" href="/" style="color:#fff;margin-bottom:14px">
         <svg class="mark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#E0A83A"/><path d="M20 7 L31 13 V27 L20 33 L9 27 V13 Z" fill="#0B2A45"/><path d="M20 14 c-4 4-6 6-6 9 a6 6 0 0 0 12 0 c0-3-2-5-6-9Z" fill="#1E7FB8"/></svg>
         <span><b>Golden West</b><span>Corporation</span></span>
       </a>

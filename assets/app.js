@@ -49,6 +49,7 @@
   /* ---------- filters ---------- */
   function renderFilters() {
     const box = $("#filters");
+    if (!box) return;
     const cats = [{ id: "all", en: t("cat_all"), es: t("cat_all") }, ...D.categories];
     box.innerHTML = cats
       .map((c) => `<button data-cat="${c.id}" class="${filter === c.id ? "on" : ""}">${lang === "es" ? c.es : c.en}</button>`)
@@ -61,6 +62,7 @@
   /* ---------- product grid ---------- */
   function renderProducts() {
     const grid = $("#grid");
+    if (!grid) return;
     const list = D.products.filter((p) => filter === "all" || p.cat === filter);
     grid.innerHTML = list.map(cardHTML).join("");
     $$(".add", grid).forEach((btn) =>
@@ -102,8 +104,10 @@
   function renderPicked() {
     // floating button
     const tb = $("#trayBtn");
-    tb.classList.toggle("show", picked.length > 0);
-    $("#trayCount").textContent = picked.length;
+    if (tb) {
+      tb.classList.toggle("show", picked.length > 0);
+      const tc = $("#trayCount"); if (tc) tc.textContent = picked.length;
+    }
     // pills in the form
     const box = $("#pickedList");
     if (!box) return;
@@ -124,6 +128,7 @@
 
   function flashTray() {
     const tb = $("#trayBtn");
+    if (!tb) return;
     tb.animate([{ transform: "scale(1)" }, { transform: "scale(1.08)" }, { transform: "scale(1)" }], { duration: 240 });
   }
 
@@ -188,20 +193,25 @@
   function initChrome() {
     // header shadow
     const hdr = $(".hdr");
-    addEventListener("scroll", () => hdr.classList.toggle("scrolled", scrollY > 8), { passive: true });
+    if (hdr) addEventListener("scroll", () => hdr.classList.toggle("scrolled", scrollY > 8), { passive: true });
     // lang toggle
     $$(".lang button").forEach((b) => b.addEventListener("click", () => {
       lang = b.dataset.lang; localStorage.setItem("gw_lang", lang); applyI18n();
     }));
     // mobile nav
     const burger = $("#burger"), nav = $("#nav");
-    burger.addEventListener("click", () => nav.classList.toggle("open"));
-    $$("#nav a").forEach((a) => a.addEventListener("click", () => nav.classList.remove("open")));
-    // tray button scrolls to form
-    $("#trayBtn").addEventListener("click", () =>
-      $("#quote").scrollIntoView({ behavior: "smooth" }));
+    if (burger && nav) {
+      burger.addEventListener("click", () => nav.classList.toggle("open"));
+      $$("#nav a").forEach((a) => a.addEventListener("click", () => nav.classList.remove("open")));
+    }
+    // tray button → form on this page, else the wholesale page
+    const tray = $("#trayBtn");
+    if (tray) tray.addEventListener("click", () => {
+      const q = $("#quote"); if (q) q.scrollIntoView({ behavior: "smooth" }); else location.href = "/wholesale#quote";
+    });
     // form
-    $("#quoteForm").addEventListener("submit", submitForm);
+    const qf = $("#quoteForm");
+    if (qf) qf.addEventListener("submit", submitForm);
   }
 
   function injectProductSchema() {

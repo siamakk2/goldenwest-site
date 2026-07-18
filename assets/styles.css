@@ -82,17 +82,29 @@ img{max-width:100%;display:block}
 .hero p{font-size:1.14rem;color:#c8d6e0;max-width:46ch;margin:0 0 1.7em}
 .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
 /* hero visual: stacked "drum labels" */
-.labels{position:relative;height:340px}
-.label{position:absolute;background:#fff;color:var(--ink);border-radius:12px;box-shadow:var(--shadow);
-  padding:16px 18px;width:250px;border-left:6px solid var(--water)}
-.label .lg{font-family:var(--font-m);font-size:.62rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
-.label b{font-family:var(--font-d);font-size:1.32rem;display:block;margin:2px 0 6px;color:var(--navy)}
-.label .row{display:flex;gap:6px;flex-wrap:wrap}
+.labels{position:relative;height:396px}
+.label{position:absolute;background:#fff;color:var(--ink);border-radius:14px;box-shadow:var(--shadow);
+  padding:20px 22px;width:290px;border-left:7px solid var(--water);text-decoration:none;
+  transition:transform .18s ease, box-shadow .18s ease}
+.label .lg{font-family:var(--font-m);font-size:.64rem;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+.label b{font-family:var(--font-d);font-size:1.5rem;display:block;margin:3px 0 8px;color:var(--navy)}
+.label .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.label .go{margin-left:auto;font-family:var(--font-d);font-weight:700;color:var(--water-dk);font-size:.86rem;white-space:nowrap}
+a.label:hover{box-shadow:0 18px 40px -18px rgba(11,42,69,.55)}
 .chip{font-family:var(--font-m);font-size:.68rem;background:var(--paper);color:var(--water-dk);
   border:1px solid var(--line);border-radius:999px;padding:3px 9px}
-.label.l1{top:6px;left:22px;transform:rotate(-4deg);z-index:3;border-left-color:var(--water)}
-.label.l2{top:112px;right:8px;transform:rotate(3.5deg);z-index:2;border-left-color:var(--amber)}
-.label.l3{top:212px;left:40px;transform:rotate(-2deg);z-index:1;border-left-color:var(--navy)}
+.label.l1{top:2px;left:12px;transform:rotate(-4deg);z-index:3;border-left-color:var(--water)}
+.label.l2{top:138px;right:0;transform:rotate(3.5deg);z-index:2;border-left-color:var(--amber)}
+.label.l3{top:256px;left:32px;transform:rotate(-2deg);z-index:1;border-left-color:var(--navy)}
+a.label.l1:hover{transform:rotate(-4deg) translateY(-5px) scale(1.03)}
+a.label.l2:hover{transform:rotate(3.5deg) translateY(-5px) scale(1.03)}
+a.label.l3:hover{transform:rotate(-2deg) translateY(-5px) scale(1.03)}
+/* page-head band for Shop / Wholesale */
+.pagehead{background:linear-gradient(160deg,var(--navy),var(--navy-2));color:#fff;padding:clamp(46px,7vw,84px) 0 clamp(30px,4vw,46px)}
+.pagehead .eyebrow{color:var(--amber);letter-spacing:.16em}
+.pagehead h1{font-size:clamp(2.1rem,4.6vw,3.2rem);margin:.3em 0 .35em;max-width:20ch}
+.pagehead p{color:#c8d6e0;max-width:58ch;font-size:1.08rem}
+.pagehead p a{color:var(--amber);font-weight:600}
 
 /* ---- trust strip ---- */
 .trust{background:var(--amber);color:var(--navy)}
@@ -221,7 +233,7 @@ section{padding:clamp(52px,7vw,92px) 0}
 /* ---- responsive ---- */
 @media(max-width:900px){
   .hero .wrap{grid-template-columns:1fr;gap:30px}
-  .labels{height:300px;max-width:320px}
+  .labels{height:360px;max-width:330px}
   #manufacturing .grid2{grid-template-columns:1fr;gap:32px}
   .steps{grid-template-columns:1fr}
   .ftr .wrap{grid-template-columns:1fr 1fr}
