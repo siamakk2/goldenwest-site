@@ -68,11 +68,11 @@ img{max-width:100%;display:block}
 .burger{display:none;background:none;border:0;color:#fff;cursor:pointer;padding:6px}
 
 /* ---- hero ---- */
-.hero{position:relative;background:
-  radial-gradient(120% 90% at 85% -10%, rgba(30,127,184,.55), transparent 60%),
-  radial-gradient(90% 70% at 0% 120%, rgba(224,168,58,.16), transparent 55%),
-  linear-gradient(160deg,var(--navy),var(--navy-2));
-  color:#fff;overflow:hidden}
+.hero{position:relative;color:#fff;overflow:hidden;background:
+  linear-gradient(100deg, rgba(8,26,43,.94) 0%, rgba(9,30,50,.80) 45%, rgba(11,42,69,.48) 100%),
+  radial-gradient(90% 70% at 0% 120%, rgba(224,168,58,.13), transparent 55%),
+  url("https://oxbklxjsbljpjzwpizip.supabase.co/storage/v1/object/public/site-assets/hero-home.png");
+  background-size:cover;background-position:center;background-repeat:no-repeat}
 .hero::after{content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
   background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.4px);background-size:22px 22px;mask:linear-gradient(180deg,#000,transparent 70%)}
 .hero .wrap{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:48px;
@@ -144,7 +144,10 @@ section{padding:clamp(52px,7vw,92px) 0}
 .step p{color:var(--muted);margin:0;font-size:.98rem}
 
 /* ---- manufacturing ---- */
-#manufacturing{background:linear-gradient(160deg,var(--navy),var(--navy-2));color:#fff}
+#manufacturing{color:#fff;background:
+  linear-gradient(160deg, rgba(11,42,69,.90), rgba(8,26,43,.88)),
+  url("https://oxbklxjsbljpjzwpizip.supabase.co/storage/v1/object/public/site-assets/hero-about.png");
+  background-size:cover;background-position:center;background-repeat:no-repeat}
 #manufacturing .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:52px;align-items:center}
 #manufacturing h2{color:#fff}
 #manufacturing .sec-head p,#manufacturing .mfg-body{color:#c8d6e0}
@@ -187,7 +190,10 @@ section{padding:clamp(52px,7vw,92px) 0}
 .form-msg.err{display:block;background:#fdecec;border:1px solid #f3c3c3;color:#a12626}
 
 /* ---- contact / footer ---- */
-.ftr{background:var(--navy);color:#c8d6e0}
+.ftr{color:#c8d6e0;background:
+  linear-gradient(180deg, rgba(11,42,69,.93), rgba(8,26,43,.96)),
+  url("https://oxbklxjsbljpjzwpizip.supabase.co/storage/v1/object/public/site-assets/hero-products.png");
+  background-size:cover;background-position:center;background-repeat:no-repeat}
 .ftr .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:36px;padding:56px 0 30px}
 .ftr h4{font-family:var(--font-d);color:#fff;font-size:1.05rem;letter-spacing:.02em;margin-bottom:12px}
 .ftr .brand{margin-bottom:14px}
