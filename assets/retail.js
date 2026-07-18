@@ -240,6 +240,23 @@
     new MutationObserver(() => { clearTimeout(t); t = setTimeout(augmentCards, 30); }).observe(grid, { childList: true });
   }
 
+  function focusParam() {
+    const slug = new URLSearchParams(location.search).get("p");
+    if (!slug) return;
+    const sel = (window.CSS && CSS.escape) ? CSS.escape(slug) : slug;
+    let tries = 0;
+    const go = () => {
+      const hit = document.querySelector('#grid [data-id="' + sel + '"]');
+      const card = hit && hit.closest(".card");
+      if (card) {
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+        card.classList.add("focus-hit");
+        setTimeout(() => card.classList.remove("focus-hit"), 2600);
+      } else if (tries++ < 25) setTimeout(go, 160);
+    };
+    go();
+  }
+
   document.addEventListener("DOMContentLoaded", async () => {
     document.body.classList.add("retail");
     injectStyles();
@@ -247,5 +264,6 @@
     watchGrid();
     await loadPrices();
     augmentCards();
+    focusParam();
   });
 })();

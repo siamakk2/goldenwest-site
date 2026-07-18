@@ -246,8 +246,30 @@
     } catch (e) {}
   }
 
+  function initLightbox() {
+    let lb = document.querySelector(".lbox");
+    if (!lb) {
+      lb = document.createElement("div"); lb.className = "lbox";
+      lb.innerHTML = `<button class="x" aria-label="Close">\u00d7</button><figure><img alt=""><figcaption></figcaption></figure>`;
+      document.body.appendChild(lb);
+      const close = () => lb.classList.remove("open");
+      lb.addEventListener("click", (e) => { if (e.target === lb || (e.target.closest && e.target.closest(".x"))) close(); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    }
+    document.addEventListener("click", (e) => {
+      const img = e.target.closest && e.target.closest(".card .cardimg img");
+      if (!img) return;
+      const card = img.closest(".card");
+      const h3 = card && card.querySelector("h3");
+      lb.querySelector("img").src = img.currentSrc || img.src;
+      lb.querySelector("figcaption").textContent = h3 ? h3.textContent : "";
+      lb.classList.add("open");
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", async () => {
     initChrome();
+    initLightbox();
     await loadLive();      // swaps in live catalog if configured; silent fallback otherwise
     applyI18n();
     injectProductSchema();
