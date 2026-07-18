@@ -47,7 +47,7 @@
     .rt-lines{flex:1;overflow:auto;padding:12px 20px;display:flex;flex-direction:column}
     .rt-continue{align-self:flex-start;background:none;border:0;color:var(--water);font-family:var(--font-b);font-weight:600;font-size:.92rem;cursor:pointer;padding:14px 0 4px}
     .rt-continue:hover{text-decoration:underline}
-    .rt-reassure{margin-top:auto;padding-top:20px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:8px;color:var(--muted);font-size:.86rem}
+    .rt-reassure{margin-top:18px;padding-top:18px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:8px;color:var(--muted);font-size:.86rem}
     .rt-reassure b{color:var(--navy);font-family:var(--font-d);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
     .rt-reassure a{color:var(--water);font-weight:600}
     .rt-line{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
@@ -59,6 +59,11 @@
     .rt-foot .sum{display:flex;justify-content:space-between;font-family:var(--font-d);font-size:1.25rem;color:var(--navy);font-weight:700}
     .rt-foot .note{font-size:.8rem;color:var(--muted)}
     .rt-empty{color:var(--muted);text-align:center;padding:40px 0}
+    @media(max-width:820px){
+      .rt-panel{top:auto;left:0;right:0;bottom:0;width:100%;height:auto;max-height:88vh;
+        border-radius:18px 18px 0 0;box-shadow:0 -14px 44px -18px rgba(0,0,0,.55)}
+      .rt-lines{flex:0 1 auto;max-height:52vh}
+    }
     .rt-modal{position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;padding:18px}
     .rt-modal.open{display:flex}
     .rt-modal .veil{position:absolute;inset:0;background:rgba(11,42,69,.55)}
