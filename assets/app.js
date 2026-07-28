@@ -17,11 +17,11 @@
         sb.from("products").select("*").eq("active", true).order("sort_order").order("name_en"),
       ]);
       if (cats.error || prods.error || !prods.data || !prods.data.length) return false;
-      D.categories = cats.data.map((c) => ({ id: c.id, en: c.name_en, es: c.name_es }));
+      D.categories = cats.data.map((c) => ({ id: c.id, en: c.name_en, es: c.name_es, ko: c.name_ko }));
       D.products = prods.data.map((p) => ({
         id: p.slug, cat: p.category_id, brand: p.brand,
-        en: p.name_en, es: p.name_es || p.name_en,
-        dEn: p.desc_en || "", dEs: p.desc_es || p.desc_en || "",
+        en: p.name_en, es: p.name_es || p.name_en, ko: p.name_ko || p.name_en,
+        dEn: p.desc_en || "", dEs: p.desc_es || p.desc_en || "", dKo: p.desc_ko || p.desc_en || "",
         sizes: p.sizes || [], sds: p.sds, tag: p.tag || null, image: p.image_url || null,
       }));
       return true;
@@ -30,6 +30,10 @@
   let filter = "all";
   let picked = JSON.parse(localStorage.getItem("gw_quote") || "[]"); // array of product ids
 
+  /* pick a localised field, falling back to English */
+  const L  = (o, base) => (o && (o[base + (lang === "en" ? "" : "_" + lang)] ?? o[base])) || "";
+  const nameOf = (o) => (o && (lang === "es" ? o.es : lang === "ko" ? o.ko : o.en)) || (o && o.en) || "";
+  const descOf = (o) => (o && (lang === "es" ? o.dEs : lang === "ko" ? o.dKo : o.dEn)) || (o && o.dEn) || "";
   const t = (k) => (D.i18n[lang] && D.i18n[lang][k]) ?? D.i18n.en[k] ?? k;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -50,9 +54,9 @@
   function renderFilters() {
     const box = $("#filters");
     if (!box) return;
-    const cats = [{ id: "all", en: t("cat_all"), es: t("cat_all") }, ...D.categories];
+    const cats = [{ id: "all", en: t("cat_all"), es: t("cat_all"), ko: t("cat_all") }, ...D.categories];
     box.innerHTML = cats
-      .map((c) => `<button data-cat="${c.id}" class="${filter === c.id ? "on" : ""}">${lang === "es" ? c.es : c.en}</button>`)
+      .map((c) => `<button data-cat="${c.id}" class="${filter === c.id ? "on" : ""}">${nameOf(c)}</button>`)
       .join("");
     $$("#filters button").forEach((b) =>
       b.addEventListener("click", () => { filter = b.dataset.cat; renderFilters(); renderProducts(); })
@@ -72,8 +76,8 @@
   }
 
   function cardHTML(p) {
-    const name = lang === "es" ? p.es : p.en;
-    const desc = lang === "es" ? p.dEs : p.dEn;
+    const name = nameOf(p);
+    const desc = descOf(p);
     const on = picked.includes(p.id);
     const flag = p.tag ? `<span class="flag">${p.tag}</span>` : "";
     const sizes = p.sizes.map((s) => `<span class="chip">${s}</span>`).join("");
@@ -116,7 +120,7 @@
     } else {
       box.innerHTML = picked
         .map((id) => {
-          const p = prod(id); const n = lang === "es" ? p.es : p.en;
+          const p = prod(id); const n = nameOf(p);
           return `<span class="pill">${n}<button data-id="${id}" aria-label="remove">✕</button></span>`;
         })
         .join("");
@@ -148,7 +152,7 @@
     const btn = $("#submitBtn");
     msg.className = "form-msg"; msg.style.display = "none";
 
-    const productNames = picked.map((id) => { const p = prod(id); return lang === "es" ? p.es : p.en; });
+    const productNames = picked.map((id) => { const p = prod(id); return nameOf(p); });
     const payload = {
       business: f.business.value.trim(),
       name: f.name.value.trim(),

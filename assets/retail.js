@@ -234,7 +234,7 @@
         cart = {}; save(); renderHeader();
         body.innerHTML = `<h3>Order received \u2713</h3>
           <p class="sub">Thank you, ${esc(customer.name)}. Your order reference is <strong>#${String(data).slice(0, 8)}</strong>.</p>
-          <div class="rt-msg ok" style="display:block">Golden West will confirm your order and delivery, and take secure payment. A copy goes to ${esc(customer.email)}.</div>
+          <div class="rt-msg ok" style="display:block">Golden West will confirm your order and delivery by phone or email, and take secure payment. Please keep your reference number.</div>
           <button class="btn btn-amber" style="width:100%;justify-content:center" onclick="this.closest('.rt-modal').classList.remove('open')">Done</button>`;
       } catch (e) {
         show("err", (e && e.message) || String(e)); btn.disabled = false; btn.textContent = "Place order";

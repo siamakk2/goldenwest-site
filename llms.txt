@@ -1,44 +1,75 @@
-# Golden West Corporation
+# Golden West Chemical
 
-> Golden West Corporation (also known as Golden West Chemical) is a family-owned manufacturer and wholesale supplier of car wash chemicals, soaps, waxes, compounds, and detailing supplies. Founded in 1990 and based in Gardena, California, it serves car washes, express tunnels, auto detailers, and fleet operators across Southern California. Pricing is wholesale and provided by quote request. Service is available in English and Spanish.
+> Golden West Chemical (legally Golden West Cleaning Corp.) is a family-owned manufacturer and wholesale supplier of car wash chemicals, soaps, waxes, compounds, and detailing supplies. Founded in 1990 and based in Gardena, California, it serves car washes, express tunnels, auto detailers, and fleet operators across Southern California. Retail prices are published online and anyone may order; wholesale pricing requires an approved trade account. Service is available in English and Spanish.
+
+## Key pages
+
+- [Home](https://goldenwestchem.com/): company overview, featured products, and contact details.
+- [Shop](https://goldenwestchem.com/shop): full catalog of 295 products with published retail prices, sizes, and online ordering.
+- [Wholesale](https://goldenwestchem.com/wholesale): trade account request and login for car washes, tunnels, detailers, and fleets.
+- [Manufacturing](https://goldenwestchem.com/#manufacturing): how Golden West formulates and produces its own chemical line in Gardena.
+- [FAQ](https://goldenwestchem.com/#faq): common questions about ordering, sizes, SDS documents, and Spanish-language service.
+- [Contact](https://goldenwestchem.com/#contact): phone, email, address, and hours.
+
+## How to buy
+
+There are two ways to purchase, and they are separate.
+
+**Retail — open to everyone.** Retail prices are published on the [Shop](https://goldenwestchem.com/shop) page. Add items to the cart, enter name, email, phone, and delivery address, and submit the order. No account or approval is needed. Golden West then confirms the order and delivery and arranges payment directly.
+
+**Wholesale — approved trade accounts.** Car washes, express tunnels, detailers, distributors, and fleet operators can [request a wholesale account](https://goldenwestchem.com/wholesale) by submitting business name, contact, business type, city, and ZIP. Wholesale pricing is not visible until Golden West approves the account. Once approved, the buyer logs in, sees trade pricing across the catalog, and can place orders on invoice or net terms.
 
 ## What Golden West sells
-- Car wash soaps (house-manufactured): Blue, Pink, and Maxi-Foam high-foam soaps; Purple & Pink Wash + Wax; and concentrated, biodegradable Touchless soap. Sold in 5-gallon pails through 55-gallon drums and 275-gallon totes.
-- Express tunnel chemicals: heavy-duty presoak, triple-color foam conditioner, and sheeting drying agents built for high-throughput tunnels.
-- Finishing products: ceramic trim shine, tire and trim dressing, and streak-free glass cleaner.
-- Waxes and compounds: carnauba paste waxes and cutting/finishing compounds.
-- Name brands stocked: 3M, P&S, Malco, and Stoner car care.
-- Supplies and equipment: soft nylon truck brushes, air and water hoses, microfiber towels, and chemical-resistant bottles, triggers, and foamers.
+
+- [Car wash soaps](https://goldenwestchem.com/shop) (house-manufactured): Blue, Pink, and Maxi-Foam high-foam soaps; Purple & Pink Wash + Wax; and concentrated, biodegradable Touchless soap. Sold in 5-gallon pails through 55-gallon drums and 275-gallon totes.
+- [Express tunnel chemicals](https://goldenwestchem.com/shop): heavy-duty presoak, triple-color foam conditioner, and sheeting drying agents built for high-throughput tunnels.
+- [Waxes and compounds](https://goldenwestchem.com/shop): carnauba paste waxes and cutting/finishing compounds.
+- [Finishing products](https://goldenwestchem.com/shop): ceramic trim shine, tire and trim dressing, and streak-free glass cleaner.
+- [Detailing brushes and applicator pads](https://goldenwestchem.com/shop): wheel and rim brushes, trim applicators, polisher pads, and backing plates.
+- [Truck and fleet brushes](https://goldenwestchem.com/shop): soft nylon and horse-hair brushes for truck and fleet washing.
+- [Clays and clay towels](https://goldenwestchem.com/shop): decontamination clay bars and clay towels.
+- [Name brands stocked](https://goldenwestchem.com/shop): 3M, P&S, Malco, and Stoner car care.
+- [Supplies and equipment](https://goldenwestchem.com/shop): air and water hoses, microfiber towels, and chemical-resistant bottles, triggers, and foamers.
+
+## Featured products
+
+- [Maxi-Foam Car Wash Soap](https://goldenwestchem.com/shop?p=maxi-foam-carwash-soap): high-foam house-manufactured soap.
+- [Maxi-Foam Pink & Orange Soap](https://goldenwestchem.com/shop?p=maxi-foam-pink-orange-soap): colored high-foam soap for tunnels and bays.
+- [Blue Car Wash Soap](https://goldenwestchem.com/shop?p=blue-carwash-soap): concentrated blue high-foam soap.
+- [Trim Shine](https://goldenwestchem.com/shop?p=trim-shine): ceramic trim and exterior plastic restorer.
+- [Green Soft Nylon Truck Brush](https://goldenwestchem.com/shop?p=green-soft-nylon-truck-brush): soft nylon brush for truck and fleet washing.
 
 ## Who Golden West serves
+
 Car washes, express wash tunnels, auto detail shops, mobile detailers, and fleet or truck-wash operators throughout Southern California, including the greater Los Angeles area.
 
-## How to buy (wholesale)
-- Browse the catalog and add products to a quote request.
-- Submit business name, contact, shipping ZIP, and estimated volume.
-- Golden West replies with wholesale pricing and delivery or shipping options.
-- Request page: https://goldenwestchem.com/#quote
-
 ## Delivery and shipping
+
 - Free delivery within a 50-mile radius of Gardena, CA on orders of $500 or more.
 - Shipping is arranged for locations beyond the free-delivery radius.
+- Taxes and delivery are confirmed when Golden West confirms the order.
 
 ## Manufacturing and sourcing
-Golden West has formulated and manufactured its own line of car wash and industrial cleaning products since 1990, which means consistent quality, bulk availability, and pricing suited to high-volume operators. It also stocks trusted name brands so buyers can source everything in one place.
+
+Golden West has formulated and manufactured its own line of car wash and industrial cleaning products since 1990, which means consistent quality, bulk availability, and pricing suited to high-volume operators. It also stocks trusted name brands so buyers can source everything in one place. See [Manufacturing](https://goldenwestchem.com/#manufacturing).
 
 ## Safety data sheets (SDS)
-Current SDS documents are available on request for every chemical product Golden West supplies.
+
+Current SDS documents are available on request for every chemical product Golden West supplies. Request them via [Contact](https://goldenwestchem.com/#contact).
 
 ## Frequently asked questions
-- Does Golden West sell to the public? It is a wholesale supplier serving car washes, tunnels, detailers, and fleets; request pricing to open a wholesale account.
-- Does Golden West make its own chemicals? Yes, since 1990, in Gardena, California.
-- Are Safety Data Sheets available? Yes, on request for every chemical product.
-- Is service available in Spanish? Yes; call (310) 213-3171 for Spanish.
-- What sizes are available? 5-gallon pails to 55-gallon drums, plus 275-gallon totes for tunnels.
+
+- **Can the public buy from Golden West?** Yes. Retail prices are published on the [Shop](https://goldenwestchem.com/shop) page and anyone can order. Car washes, tunnels, detailers, and fleets should [request a wholesale account](https://goldenwestchem.com/wholesale) for trade pricing.
+- **How do I get wholesale pricing?** [Request a wholesale account](https://goldenwestchem.com/wholesale). Wholesale prices become visible once Golden West approves the account.
+- **Does Golden West make its own chemicals?** Yes, since 1990, in Gardena, California. See [Manufacturing](https://goldenwestchem.com/#manufacturing).
+- **Are Safety Data Sheets available?** Yes, on request for every chemical product.
+- **Is service available in Spanish?** Yes; call (310) 213-3171 for Spanish. The website is available in English and Spanish.
+- **What sizes are available?** 5-gallon pails to 55-gallon drums, plus 275-gallon totes for tunnels.
 
 ## Contact
-- Phone: (310) 538-0918
-- Spanish: (310) 213-3171
-- Email: oscar@goldenwestchem.com
+
+- Phone: [(310) 538-0918](tel:+13105380918)
+- Spanish: [(310) 213-3171](tel:+13102133171)
+- Email: [oscar@goldenwestchem.com](mailto:oscar@goldenwestchem.com)
 - Address: 1538 West 132nd Street, Gardena, CA 90249
 - Hours: Monday to Friday, 8:00 AM to 5:00 PM Pacific
