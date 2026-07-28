@@ -279,3 +279,11 @@ section{padding:clamp(52px,7vw,92px) 0}
   .reveal{opacity:1;transform:none;transition:none}
   .card:hover{transform:none}
 }
+
+/* ---------- Korean typography ----------
+   Korean has no spaces inside a word's syllable blocks, so the default
+   break-anywhere behaviour splits words mid-word (남부 캘리포니 / 아에서).
+   keep-all forces breaks at spaces instead, the way Korean should set. */
+html[lang="ko"] { word-break: keep-all; line-break: strict; }
+html[lang="ko"] .hero h1,
+html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 { word-break: keep-all; }

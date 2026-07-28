@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/gw-icon-512.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/gw-icon-180.png" />
-<link rel="stylesheet" href="assets/styles.css?v=7" />
+<link rel="stylesheet" href="assets/styles.css?v=8" />
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -76,11 +76,11 @@
   <div class="wrap">
     <a class="brand" href="/" aria-label="Golden West Chemical home">
       <img class="mark" src="/assets/gw-logo.png" srcset="/assets/gw-logo.png 1x, /assets/gw-logo@2x.png 2x" alt="Golden West Chemical" width="120" height="60" style="height:38px;width:auto;display:block" />
-      <span><b>Golden West</b><span>Since 1990</span></span>
+      <span><b>Golden West</b><span data-i18n="brand_since">Since 1990</span></span>
     </a>
         <nav class="nav" id="nav" aria-label="Primary">
-      <a href="/shop">Shop</a>
-      <a href="/wholesale">Wholesale</a>
+      <a href="/shop" data-i18n="nav_shop">Shop</a>
+      <a href="/wholesale" data-i18n="nav_wholesale">Wholesale</a>
       <a href="/#manufacturing" data-i18n="nav_manufacturing">Manufacturing</a>
       <a href="/#faq" data-i18n="nav_faq">FAQ</a>
       <a href="/#contact" data-i18n="nav_contact">Contact</a>
@@ -103,12 +103,12 @@
 <!-- ============ PAGE HEAD ============ -->
 <section class="pagehead pagehead-wholesale">
   <div class="wrap">
-    <p class="eyebrow">Wholesale program</p>
-    <h1>Become a Golden West wholesale customer</h1>
-    <p>Approved accounts see member pricing, order online, and pick invoice / net terms or card at checkout. We supply car washes, express tunnels, detailers, and fleets across Southern California.</p>
+    <p class="eyebrow" data-i18n="ws_eyebrow">Wholesale program</p>
+    <h1 data-i18n="ws_title">Become a Golden West wholesale customer</h1>
+    <p data-i18n="ws_sub">Approved accounts see member pricing, order online, and pick invoice / net terms or card at checkout. We supply car washes, express tunnels, detailers, and fleets across Southern California.</p>
     <div class="hero-cta" style="margin-top:20px">
-      <button class="btn btn-amber" onclick="window.GW_WS&amp;&amp;GW_WS.openRequest()">Request a wholesale account</button>
-      <button class="btn btn-ghost" onclick="window.GW_WS&amp;&amp;GW_WS.openLogin()">Wholesale login</button>
+      <button class="btn btn-amber" onclick="window.GW_WS&amp;&amp;GW_WS.openRequest()" data-i18n="ws_cta_req">Request a wholesale account</button>
+      <button class="btn btn-ghost" onclick="window.GW_WS&amp;&amp;GW_WS.openLogin()" data-i18n="ws_cta_login">Wholesale login</button>
     </div>
   </div>
 </section>
@@ -184,9 +184,9 @@
     <div>
       <a class="brand" href="/" style="color:#fff;margin-bottom:14px">
         <img class="mark" src="/assets/gw-logo.png" srcset="/assets/gw-logo.png 1x, /assets/gw-logo@2x.png 2x" alt="Golden West Chemical" width="120" height="60" style="height:38px;width:auto;display:block" />
-        <span><b>Golden West</b><span>Corporation</span></span>
+        <span><b>Golden West</b><span data-i18n="brand_corp">Corporation</span></span>
       </a>
-      <p style="max-width:34ch;color:#a9bccb;font-size:.95rem">Manufacturer & wholesale supplier of car wash chemicals and supplies, Southern California, since 1990.</p>
+      <p style="max-width:34ch;color:#a9bccb;font-size:.95rem" data-i18n="ftr_blurb">Manufacturer & wholesale supplier of car wash chemicals and supplies, Southern California, since 1990.</p>
     </div>
     <div>
       <h4 data-i18n="contact_title">Talk to Golden West</h4>
@@ -197,12 +197,12 @@
     <div>
       <h4 data-i18n="nav_contact">Contact</h4>
       <span class="li"><b data-i18n="address">Address</b>1538 West 132nd Street<br />Gardena, CA 90249</span>
-      <span class="li"><b>Hours</b><span data-i18n="hours">Mon–Fri · 8:00 AM – 5:00 PM</span></span>
+      <span class="li"><b data-i18n="hours_label">Hours</b><span data-i18n="hours">Mon–Fri · 8:00 AM – 5:00 PM</span></span>
     </div>
   </div>
   <div class="wrap ftr-bottom">
     <span>© <span id="yr"></span> Golden West Chemical. <span data-i18n="rights">All rights reserved.</span></span>
-    <span>Gardena, California · Serving Southern California</span>
+    <span data-i18n="ftr_region">Gardena, California · Serving Southern California</span>
   </div>
 </footer>
 
@@ -213,10 +213,10 @@
 </button>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/config.js?v=7"></script>
-<script src="assets/data.js?v=7"></script>
-<script src="assets/app.js?v=7"></script>
-<script src="assets/shop.js?v=7"></script>
+<script src="assets/config.js?v=8"></script>
+<script src="assets/data.js?v=8"></script>
+<script src="assets/app.js?v=8"></script>
+<script src="assets/shop.js?v=8"></script>
 <script>document.getElementById("yr").textContent=new Date().getFullYear();</script>
 </body>
 </html>
