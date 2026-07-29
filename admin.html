@@ -143,14 +143,38 @@ document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
 });
 
 async function loadRequests(){
-  const { data, error } = await sb.from("wholesale_accounts").select("*").order("created_at",{ascending:false});
+  const [{ data, error }, { data:qs, error:qe }] = await Promise.all([
+    sb.from("wholesale_accounts").select("*").order("created_at",{ascending:false}),
+    sb.from("quote_requests").select("*").order("created_at",{ascending:false})
+  ]);
   if(error){ showErr(error.message); return; }
+  if(qe){ showErr(qe.message); }
   const pending = data.filter(r=>r.status==="pending");
-  $("#reqN").textContent = pending.length ? "("+pending.length+")" : "";
-  $("#requests").innerHTML = `<div class="card"><h2>Wholesale accounts</h2>
+  const newQ = (qs||[]).filter(q=>q.status==="new");
+  $("#reqN").textContent = (pending.length+newQ.length) ? "("+(pending.length+newQ.length)+")" : "";
+  $("#requests").innerHTML = `<div class="card"><h2>Pricing requests</h2>
+    <table><thead><tr><th>Business</th><th>Contact</th><th>Interested in</th><th>Status</th><th>Received</th><th></th></tr></thead>
+    <tbody>${(qs||[]).map(rowQuote).join("")||`<tr><td colspan=6 class=muted>No pricing requests yet.</td></tr>`}</tbody></table></div>
+    <div class="card"><h2>Wholesale accounts</h2>
     <table><thead><tr><th>Business</th><th>Contact</th><th>Type</th><th>Location</th><th>Status</th><th>Requested</th><th></th></tr></thead>
     <tbody>${data.map(rowReq).join("")||`<tr><td colspan=7 class=muted>No requests yet.</td></tr>`}</tbody></table></div>`;
   bindReq();
+  document.querySelectorAll("[data-qdone]").forEach(b=>b.onclick=()=>qStatus(b.dataset.qdone,"handled"));
+  document.querySelectorAll("[data-qnew]").forEach(b=>b.onclick=()=>qStatus(b.dataset.qnew,"new"));
+}
+function rowQuote(q){
+  const meta=[q.business_type,q.city_state,q.zip,q.volume].filter(Boolean).join(" · ");
+  return `<tr><td><b>${esc(q.business||"—")}</b>${meta?`<br><span class="muted">${esc(meta)}</span>`:""}</td>
+    <td>${esc(q.contact_name||"—")}<br><span class="muted">${esc(q.email||"")}${q.phone?" · "+esc(q.phone):""}</span></td>
+    <td class="items">${esc(q.products||"—")}${q.message?`<br><span class="muted">${esc(q.message)}</span>`:""}</td>
+    <td><span class="pill p-${q.status==="new"?"pending":"approved"}">${q.status}</span></td>
+    <td class="muted">${fmt(q.created_at)}</td>
+    <td>${q.status==="new"?`<button class="btn water" data-qdone="${q.id}">Mark handled</button>`:`<button class="btn out" data-qnew="${q.id}">Reopen</button>`}</td></tr>`;
+}
+async function qStatus(id,status){
+  const { error } = await sb.from("quote_requests").update({status}).eq("id",id);
+  if(error) return showErr(error.message);
+  loadRequests();
 }
 function rowReq(r){
   const act = r.status==="pending"
