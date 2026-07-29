@@ -225,8 +225,8 @@ async function retStatus(id,status){
 }
 let PRODUCTS=[];
 const escA=(s)=>String(s==null?"":s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
-const priceOf=(p)=> (p.product_prices&&p.product_prices[0])?p.product_prices[0]:null;
-const retailOf=(p)=> (p.product_retail&&p.product_retail[0])?p.product_retail[0]:null;
+const priceOf=(p)=>{ const v=p.product_prices; return Array.isArray(v) ? (v[0]||null) : (v||null); };
+const retailOf=(p)=>{ const v=p.product_retail; return Array.isArray(v) ? (v[0]||null) : (v||null); };
 
 async function loadProducts(){
   const { data, error } = await sb.from("products")
@@ -258,15 +258,14 @@ function renderProducts(q){
         <div class="meta">${esc(p.sku||"no SKU")} · ${esc(p.slug)}</div>
       </div>
       <div>
-        <label>Wholesale price</label><div class="in"><span>$</span><input class="pin sm" data-f="price" value="${dollars}" ${pr?"":"disabled"}></div>
+        <label>Wholesale price</label><div class="in"><span>$</span><input class="pin sm" data-f="price" value="${dollars}"></div>
         <label>Retail price</label><div class="in"><span>$</span><input class="pin sm" data-f="retail" value="${rdollars}"></div>
-        <label>Unit</label><input class="pin" data-f="unit" value="${escA(pr?pr.unit:"")}" ${pr?"":"disabled"}>
-        <label>Min order qty</label><input class="pin sm" data-f="moq" value="${escA(pr?pr.min_order_qty:"")}" ${pr?"":"disabled"}>
-        ${pr?"":`<div class="meta" style="color:#a12626;margin-top:6px">no price set</div>`}
+        <label>Unit</label><input class="pin" data-f="unit" value="${escA(pr?pr.unit:"")}">
+        <label>Min order qty</label><input class="pin sm" data-f="moq" value="${escA(pr?pr.min_order_qty:"")}">
       </div>
       <div class="act">
         <label class="tog"><input type="checkbox" data-f="active" ${p.active?"checked":""}> Active</label>
-        <label class="tog"><input type="checkbox" data-f="in_stock" ${(pr&&pr.in_stock)?"checked":""} ${pr?"":"disabled"}> In stock</label>
+        <label class="tog"><input type="checkbox" data-f="in_stock" ${(!pr||pr.in_stock)?"checked":""}> In stock</label>
         <button class="btn amber" data-save>Save</button>
       </div>
     </div>`;
@@ -281,9 +280,9 @@ async function saveProduct(row){
   const pUpd={ name_en:g("name_en").value.trim(), name_es:g("name_es").value.trim(), desc_en:g("desc_en").value.trim(), desc_es:g("desc_es").value.trim(), active:g("active").checked };
   const r1=await sb.from("products").update(pUpd).eq("id",id);
   let r2={error:null}; const priceEl=g("price");
-  if(priceEl && !priceEl.disabled){
+  if(priceEl && priceEl.value.trim()!==""){
     const cents=Math.round(parseFloat(priceEl.value||"0")*100);
-    r2=await sb.from("product_prices").update({ price_cents:isNaN(cents)?0:cents, unit:g("unit").value.trim(), min_order_qty:parseInt(g("moq").value||"1",10)||1, in_stock:g("in_stock").checked }).eq("product_id",id);
+    r2=await sb.from("product_prices").upsert({ product_id:id, price_cents:isNaN(cents)?0:cents, currency:"usd", unit:g("unit").value.trim()||null, min_order_qty:parseInt(g("moq").value||"1",10)||1, in_stock:g("in_stock").checked }, { onConflict:"product_id" });
   }
   let r3={error:null}; const retEl=g("retail");
   if(retEl && retEl.value.trim()!==""){
@@ -293,8 +292,9 @@ async function saveProduct(row){
   btn.disabled=false; btn.textContent="Save";
   if(r1.error||r2.error||r3.error){ showErr((r1.error||r2.error||r3.error).message); return; }
   const p=PRODUCTS.find(x=>x.id===id);
-  if(p){ Object.assign(p,pUpd); const pr=priceOf(p); if(pr&&priceEl&&!priceEl.disabled){ pr.price_cents=Math.round(parseFloat(priceEl.value||"0")*100); pr.unit=g("unit").value.trim(); pr.min_order_qty=parseInt(g("moq").value||"1",10)||1; pr.in_stock=g("in_stock").checked; }
-    if(retEl && retEl.value.trim()!==""){ if(!p.product_retail||!p.product_retail[0]) p.product_retail=[{}]; p.product_retail[0].retail_cents=Math.round(parseFloat(retEl.value||"0")*100); p.product_retail[0].in_stock=g("in_stock").checked; } }
+  if(p){ Object.assign(p,pUpd);
+    if(priceEl && priceEl.value.trim()!==""){ let pr2=priceOf(p); if(!pr2){ pr2={}; p.product_prices=pr2; } pr2.price_cents=Math.round(parseFloat(priceEl.value||"0")*100); pr2.unit=g("unit").value.trim(); pr2.min_order_qty=parseInt(g("moq").value||"1",10)||1; pr2.in_stock=g("in_stock").checked; }
+    if(retEl && retEl.value.trim()!==""){ let ro=retailOf(p); if(!ro){ ro={}; p.product_retail=ro; } ro.retail_cents=Math.round(parseFloat(retEl.value||"0")*100); ro.in_stock=g("in_stock").checked; } }
   const m=$("#amsg"); m.className="msg ok"; m.textContent=`Saved “${pUpd.name_en}”.`; setTimeout(()=>{ if(m.className.includes("ok")) m.className="msg"; },3000);
 }
 document.addEventListener("input",(e)=>{ if(e.target && e.target.id==="prodSearch") renderProducts(e.target.value); });
