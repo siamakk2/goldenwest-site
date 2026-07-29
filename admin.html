@@ -250,8 +250,8 @@ async function loadRetail(){
 }
 function rowRet(o){
   const items = (o.retail_order_items||[]).map(i=>`${i.qty}× ${i.product_name}${i.size?" ("+i.size+")":""} @ ${money(i.unit_price_cents)}`).join("\n");
-  return `<tr><td><b>${esc(o.customer_name)}</b><br><span class="muted">${esc(o.email||"")}${o.phone?" · "+esc(o.phone):""}</span><br><span class="muted">${esc(o.address||"")}</span></td>
-    <td class="items">${esc(items)}</td><td><b>${money(o.subtotal_cents)}</b></td>
+  return `<tr><td><b>${esc(o.customer_name)}</b><br><span class="muted">${esc(o.email||"")}${o.phone?" · "+esc(o.phone):""}</span><br><span class="muted">${esc(o.address||"")}${o.zip?" "+esc(o.zip):""}</span></td>
+    <td class="items">${esc(items)}</td><td><b>${money(o.subtotal_cents + (o.freight_cents||0))}</b>${o.freight_cents?`<br><span class="muted">incl. ${money(o.freight_cents)} freight</span>`:""}</td>
     <td><span class="pill p-${o.status}">${o.status}</span></td><td class="muted">${fmt(o.created_at)}</td>
     <td>${o.status==="pending"?`<button class="btn water" data-rpaid="${o.id}">Mark paid</button> <button class="btn out" data-rful="${o.id}">Fulfilled</button> <button class="btn red" data-rcan="${o.id}">Cancel</button>`:(o.status==="paid"?`<button class="btn out" data-rful="${o.id}">Fulfilled</button>`:"")}</td></tr>`;
 }
