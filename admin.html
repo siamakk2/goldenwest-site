@@ -322,6 +322,13 @@ const escA=(s)=>String(s==null?"":s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;
 const priceOf=(p)=>{ const v=p.product_prices; return Array.isArray(v) ? (v[0]||null) : (v||null); };
 const retailOf=(p)=>{ const v=p.product_retail; return Array.isArray(v) ? (v[0]||null) : (v||null); };
 const gal=(s)=>{ const m=/([\d.]+)\s*gal/i.exec(s||""); return m?parseFloat(m[1]):999; };
+const LIQUID_CATS=["chemical-products","by-gallon","express-tunnel","waxes-compounds","finishing-touches","3m-ps-malco-and-stoner-car-care"];
+function isLiquid(p){
+  if(LIQUID_CATS.includes(p.category_id)) return true;
+  const t=((p.name_en||"")+" "+((priceOf(p)||{}).unit||"")).toLowerCase();
+  return /gallon|degreaser|shampoo|soap|cleaner|polish|wax|dressing|shine|sealant|solvent|compound/.test(t);
+}
+function szChips(p){ return isLiquid(p) ? ["1 Gallon","5 Gallon","30 Gallon","55 Gallon Drum"] : ["Each","Pack of 12","Case"]; }
 function szRow(r){
   return `<div class="szrow">
     <input type="text" data-sz="size" value="${escA(r.size||"")}" placeholder="e.g. 5 Gallon">
@@ -405,7 +412,7 @@ function renderProducts(q){
         <div class="szbox">
           <h4>Container sizes &amp; prices <span style="text-transform:none;letter-spacing:0">(wholesale / retail per container)</span></h4>
           <div class="szrows">${(Array.isArray(p.size_prices)?p.size_prices:(p.size_prices?[p.size_prices]:[])).sort((a,b)=>gal(a.size)-gal(b.size)).map(szRow).join("")}</div>
-          <div class="szadd">${["1 Gallon","5 Gallon","30 Gallon","55 Gallon Drum"].map(z=>`<button type="button" data-addsz="${escA(z)}">+ ${esc(z)}</button>`).join("")}<button type="button" data-addsz="">+ Custom size</button></div>
+          <div class="szadd">${szChips(p).map(z=>`<button type="button" data-addsz="${escA(z)}">+ ${esc(z)}</button>`).join("")}<button type="button" data-addsz="">+ Custom size</button></div>
         </div>
       </div>
       <div class="act">
