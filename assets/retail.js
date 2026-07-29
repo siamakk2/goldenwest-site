@@ -10,6 +10,7 @@
 
   let priceMap = {};                 // slug -> { product_id, cents, in_stock }
   let cart = {};                     // key(slug|size) -> { slug, product_id, size, qty, name, cents }
+  let sizeMap = {}, freightRules = [];
   try { cart = JSON.parse(localStorage.getItem("gw_retail_cart") || "{}"); } catch (e) { cart = {}; }
 
   const money = (c) => "$" + (Number(c || 0) / 100).toFixed(2);
@@ -109,27 +110,37 @@
         rt.innerHTML = `<div class="price">${money(p.cents)}<small>Retail</small></div><div class="oos">Out of stock</div>`;
         return;
       }
-      const sizes = Array.from(card.querySelectorAll(".sizes .chip")).map((c) => c.textContent.trim()).filter(Boolean);
-      const sizeSel = sizes.length
-        ? `<select class="rt-size">${sizes.map((s) => `<option>${esc(s)}</option>`).join("")}</select>`
-        : "";
+      const priced = (sizeMap[slug] || []).filter((r) => r.in_stock !== false);
+      const chipSizes = Array.from(card.querySelectorAll(".sizes .chip")).map((c) => c.textContent.trim()).filter(Boolean);
+      const sizeSel = priced.length
+        ? `<select class="rt-size">${priced.map((r, i) => `<option value="${esc(r.size)}" data-cents="${r.cents}"${i ? "" : " selected"}>${esc(r.size)} — ${money(r.cents)}</option>`).join("")}</select>`
+        : (chipSizes.length ? `<select class="rt-size">${chipSizes.map((s) => `<option>${esc(s)}</option>`).join("")}</select>` : "");
+      const startCents = priced.length ? priced[0].cents : p.cents;
       rt.innerHTML = `
-        <div class="price">${money(p.cents)}<small>Retail · per unit</small></div>
+        <div class="price"><span class="rt-amt">${money(startCents)}</span><small>Retail${priced.length ? "" : " · per unit"}</small></div>
         <div class="opts">
           ${sizeSel}
           <div class="rt-qty"><button type="button" data-d="-1">\u2212</button><input type="text" inputmode="numeric" value="1"><button type="button" data-d="1">+</button></div>
         </div>
         <button class="btn btn-amber rt-add" type="button">Add to cart</button>`;
+      const selEl = rt.querySelector(".rt-size");
+      if (priced.length && selEl) selEl.onchange = () => {
+        const o = selEl.selectedOptions[0];
+        rt.querySelector(".rt-amt").textContent = money(parseInt(o.dataset.cents, 10));
+      };
       const qtyInput = rt.querySelector(".rt-qty input");
       rt.querySelectorAll(".rt-qty button").forEach((b) => b.onclick = () => {
         let v = parseInt(qtyInput.value || "1", 10) || 1; v = Math.max(1, v + parseInt(b.dataset.d, 10)); qtyInput.value = v;
       });
       rt.querySelector(".rt-add").onclick = () => {
-        const size = rt.querySelector(".rt-size") ? rt.querySelector(".rt-size").value : "";
+        const sel = rt.querySelector(".rt-size");
+        const size = sel ? sel.value : "";
+        const o = sel && sel.selectedOptions[0];
+        const cents = (o && o.dataset.cents) ? parseInt(o.dataset.cents, 10) : p.cents;
         const qty = Math.max(1, parseInt(qtyInput.value || "1", 10) || 1);
         const name = (card.querySelector("h3") || {}).textContent || slug;
         const k = keyOf(slug, size);
-        cart[k] = { slug, product_id: p.product_id, size, qty: (cart[k] ? cart[k].qty : 0) + qty, name, cents: p.cents };
+        cart[k] = { slug, product_id: p.product_id, size, qty: (cart[k] ? cart[k].qty : 0) + qty, name, cents };
         save(); renderHeader(); flashCart();
       };
     });
@@ -213,17 +224,43 @@
         <div class="rt-field"><label>Email</label><input id="c_email" type="email" autocomplete="email"></div>
         <div class="rt-field"><label>Phone</label><input id="c_phone" type="tel" autocomplete="tel"></div>
       </div>
-      <div class="rt-field"><label>Delivery address</label><textarea id="c_address" rows="2" autocomplete="street-address"></textarea></div>
+      <div class="rt-row2">
+        <div class="rt-field" style="flex:2"><label>Delivery address</label><textarea id="c_address" rows="2" autocomplete="street-address"></textarea></div>
+        <div class="rt-field" style="flex:1"><label>ZIP code</label><input id="c_zip" inputmode="numeric" autocomplete="postal-code" maxlength="10"></div>
+      </div>
+      <div class="rt-totals" style="margin:4px 0 14px;font-size:.95rem;color:var(--ink)">
+        <div style="display:flex;justify-content:space-between;padding:2px 0"><span>Subtotal</span><span>${money(subtotal())}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:2px 0"><span>Delivery</span><span id="c_freight" style="color:var(--muted)">enter ZIP</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0 0;font-weight:700;color:var(--navy);border-top:1px dashed var(--line);margin-top:6px"><span>Total</span><span id="c_total">${money(subtotal())}</span></div>
+      </div>
       <button class="btn btn-amber" id="rtPlace" style="width:100%;justify-content:center">Place order · ${money(subtotal())}</button>
       <p class="sub" style="margin:12px 0 0;font-size:.82rem">Secure card payment is being activated. Submit your order and Golden West will confirm and take payment.</p>`;
     closeDrawer(); modal.classList.add("open");
     const show = (cls, txt) => { const m = body.querySelector("#m"); m.className = "rt-msg " + cls; m.innerHTML = txt; };
+    const zipEl = body.querySelector("#c_zip");
+    const updFreight = () => {
+      const f = freightFor(zipEl.value);
+      const fr = body.querySelector("#c_freight"), tot = body.querySelector("#c_total"), btn0 = body.querySelector("#rtPlace");
+      if (f == null) {
+        fr.textContent = zipEl.value.replace(/\D/g, "").length >= 5 ? "quoted after order" : "enter ZIP";
+        fr.style.color = "var(--muted)";
+        tot.textContent = money(subtotal());
+        btn0.textContent = "Place order · " + money(subtotal());
+      } else {
+        fr.textContent = f === 0 ? "FREE" : money(f);
+        fr.style.color = f === 0 ? "#1d7a3d" : "var(--ink)";
+        tot.textContent = money(subtotal() + f);
+        btn0.textContent = "Place order · " + money(subtotal() + f);
+      }
+    };
+    zipEl.addEventListener("input", updFreight);
     body.querySelector("#rtPlace").onclick = async () => {
       const customer = {
         name: body.querySelector("#c_name").value.trim(),
         email: body.querySelector("#c_email").value.trim(),
         phone: body.querySelector("#c_phone").value.trim(),
         address: body.querySelector("#c_address").value.trim(),
+        zip: body.querySelector("#c_zip").value.trim(),
       };
       if (!customer.email || !customer.name) return show("err", "Please enter your name and email.");
       const items = Object.values(cart).map((c) => ({ product_id: c.product_id, size: c.size, qty: c.qty }));
@@ -244,14 +281,33 @@
 
   /* ---------- data + init ---------- */
   async function loadPrices() {
-    const { data, error } = await sb.from("product_retail")
-      .select("product_id, retail_cents, in_stock, products(slug)");
+    const [{ data, error }, { data: sp }, { data: fr }] = await Promise.all([
+      sb.from("product_retail").select("product_id, retail_cents, in_stock, products(slug)"),
+      sb.from("size_prices").select("product_id, size, retail_cents, in_stock, products(slug)").not("retail_cents", "is", null),
+      sb.from("freight_rules").select("zip_prefix, base_cents, per_gallon_cents, free_over_cents"),
+    ]);
     if (error || !data) return;
-    priceMap = {};
+    priceMap = {}; sizeMap = {}; freightRules = fr || [];
     data.forEach((r) => {
       const slug = r.products && r.products.slug;
       if (slug) priceMap[slug] = { product_id: r.product_id, cents: r.retail_cents, in_stock: r.in_stock };
     });
+    (sp || []).forEach((r) => {
+      const slug = r.products && r.products.slug;
+      if (!slug) return;
+      (sizeMap[slug] = sizeMap[slug] || []).push({ size: r.size, cents: r.retail_cents, in_stock: r.in_stock });
+    });
+    Object.values(sizeMap).forEach((a) => a.sort((x, y) => gallonsOf(x.size) - gallonsOf(y.size)));
+  }
+  const gallonsOf = (s) => { const m = /([\d.]+)\s*gal/i.exec(s || ""); return m ? parseFloat(m[1]) : 0; };
+  function cartGallons() { return Object.values(cart).reduce((t, c) => t + gallonsOf(c.size) * c.qty, 0); }
+  function freightFor(zip) {
+    const z = String(zip || "").replace(/\D/g, "").slice(0, 5);
+    if (z.length < 5 || !freightRules.length) return null;
+    const rule = freightRules.filter((r) => z.startsWith(r.zip_prefix)).sort((a, b) => b.zip_prefix.length - a.zip_prefix.length)[0];
+    if (!rule) return null;
+    if (rule.free_over_cents != null && subtotal() >= rule.free_over_cents) return 0;
+    return rule.base_cents + Math.ceil(rule.per_gallon_cents * cartGallons());
   }
   function watchGrid() {
     const grid = document.getElementById("grid");
