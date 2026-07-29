@@ -37,7 +37,16 @@
   .items{font-family:"IBM Plex Mono";font-size:.8rem;color:var(--muted);white-space:pre-line}
   .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
   .toolbar .search{flex:1;min-width:200px;border:1.5px solid var(--line);border-radius:9px;padding:.55em .8em;font-size:.95rem}
-  .prod{display:grid;grid-template-columns:1.5fr .7fr auto;gap:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;align-items:start}
+  .prod{display:grid;grid-template-columns:92px 1.5fr .7fr auto;gap:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;align-items:start}
+  .prod .thbox{display:flex;flex-direction:column;gap:6px;align-items:center}
+  .prod img.th,.prod .noimg{width:88px;height:88px;object-fit:contain;background:#f4f7f9;border:1px solid var(--line);border-radius:8px}
+  .prod .noimg{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.65rem;text-align:center}
+  .prod .upl{font-size:.72rem;color:var(--water);cursor:pointer;text-decoration:underline;font-family:"Barlow Semi Condensed";font-weight:600}
+  .prod input[type=file]{display:none}
+  #newProd{display:none}
+  #newProd .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+  #newProd label{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:8px 0 2px;font-family:"Barlow Semi Condensed"}
+  #newProd input,#newProd select{width:100%;border:1.5px solid var(--line);border-radius:7px;padding:.45em .55em;font-size:.9rem;font-family:"IBM Plex Sans"}
   .prod label{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:8px 0 2px;font-family:"Barlow Semi Condensed"}
   .prod input.pin,.prod textarea.pin{width:100%;border:1.5px solid var(--line);border-radius:7px;padding:.4em .5em;font-size:.86rem;font-family:"IBM Plex Sans"}
   .prod textarea.pin{resize:vertical;min-height:36px;font-size:.8rem}
@@ -71,7 +80,24 @@
   </div>
   <div class="msg" id="amsg"></div>
   <div id="products">
-    <div class="toolbar"><input class="search" id="prodSearch" placeholder="Search products by name or SKU…"><span class="muted" id="prodCount"></span></div>
+    <div class="toolbar"><input class="search" id="prodSearch" placeholder="Search products by name or SKU…"><button class="btn water" id="newProdBtn">+ New product</button><span class="muted" id="prodCount"></span></div>
+    <div class="card" id="newProd">
+      <h2>New product</h2>
+      <div class="grid2">
+        <div><label>Name (EN) *</label><input id="np_name_en"></div>
+        <div><label>Name (ES)</label><input id="np_name_es"></div>
+        <div><label>SKU</label><input id="np_sku"></div>
+        <div><label>Category</label><select id="np_cat"></select></div>
+        <div><label>Price ($)</label><input id="np_price" inputmode="decimal"></div>
+        <div><label>Unit (e.g. 1 Gallon, Each)</label><input id="np_unit"></div>
+        <div><label>Min order qty</label><input id="np_moq" value="1" inputmode="numeric"></div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <button class="btn amber" id="np_create">Create product</button>
+        <button class="btn out" id="np_cancel">Cancel</button>
+      </div>
+      <p class="muted" style="margin:10px 0 0">After creating, use “Upload image” on the product card to add its photo.</p>
+    </div>
     <div id="prodList"><div class="muted" style="padding:16px 0">Loading products…</div></div>
   </div>
   <div id="requests" style="display:none"></div>
@@ -202,7 +228,7 @@ const priceOf=(p)=> (p.product_prices&&p.product_prices[0])?p.product_prices[0]:
 
 async function loadProducts(){
   const { data, error } = await sb.from("products")
-    .select("id,slug,sku,name_en,name_es,desc_en,desc_es,active,sort_order,product_prices(price_cents,unit,min_order_qty,in_stock,currency)")
+    .select("id,slug,sku,name_en,name_es,desc_en,desc_es,active,sort_order,image_url,category_id,product_prices(price_cents,unit,min_order_qty,in_stock,currency)")
     .order("sort_order");
   if(error){ $("#prodList").innerHTML=`<div class="msg err">${esc(error.message)}</div>`; return; }
   PRODUCTS = data||[];
@@ -216,6 +242,11 @@ function renderProducts(q){
   $("#prodList").innerHTML = list.map(p=>{
     const pr=priceOf(p); const dollars = pr ? (pr.price_cents/100).toFixed(2) : "";
     return `<div class="prod" data-id="${p.id}">
+      <div class="thbox">
+        ${p.image_url?`<img class="th" src="${escA(p.image_url)}" loading="lazy" onerror="this.outerHTML='<div class=noimg>image missing</div>'">`:`<div class="noimg">no image</div>`}
+        <span class="upl" data-uplbtn>Upload image</span>
+        <input type="file" accept="image/*" data-uplfile>
+      </div>
       <div>
         <label>Name (EN)</label><input class="pin" data-f="name_en" value="${escA(p.name_en)}">
         <label>Name (ES)</label><input class="pin" data-f="name_es" value="${escA(p.name_es)}">
@@ -237,6 +268,8 @@ function renderProducts(q){
     </div>`;
   }).join("");
   document.querySelectorAll("#prodList [data-save]").forEach(btn=>btn.onclick=()=>saveProduct(btn.closest(".prod")));
+  document.querySelectorAll("#prodList [data-uplbtn]").forEach(s=>s.onclick=()=>s.closest(".thbox").querySelector("[data-uplfile]").click());
+  document.querySelectorAll("#prodList [data-uplfile]").forEach(inp=>inp.onchange=()=>{ if(inp.files&&inp.files[0]) uploadImage(inp.closest(".prod"), inp.files[0]); });
 }
 async function saveProduct(row){
   const id=row.dataset.id, g=(f)=>row.querySelector(`[data-f="${f}"]`);
@@ -255,6 +288,56 @@ async function saveProduct(row){
   const m=$("#amsg"); m.className="msg ok"; m.textContent=`Saved “${pUpd.name_en}”.`; setTimeout(()=>{ if(m.className.includes("ok")) m.className="msg"; },3000);
 }
 document.addEventListener("input",(e)=>{ if(e.target && e.target.id==="prodSearch") renderProducts(e.target.value); });
+
+async function uploadImage(row, file){
+  const id=row.dataset.id, btn=row.querySelector("[data-uplbtn]");
+  if(file.size > 8*1024*1024){ showErr("Image is over 8 MB — please use a smaller file."); return; }
+  btn.textContent="Uploading…";
+  const clean=(file.name||"img").toLowerCase().replace(/[^a-z0-9.]+/g,"-").replace(/^-+|-+$/g,"");
+  const path=`uploads/${Date.now()}-${clean}`;
+  const { error:upErr } = await sb.storage.from("product-images").upload(path, file, { cacheControl:"31536000", contentType:file.type||"image/jpeg" });
+  if(upErr){ btn.textContent="Upload image"; showErr(upErr.message); return; }
+  const url = sb.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+  const { error:dbErr } = await sb.from("products").update({ image_url:url }).eq("id",id);
+  btn.textContent="Upload image";
+  if(dbErr){ showErr(dbErr.message); return; }
+  const p=PRODUCTS.find(x=>x.id===id); if(p) p.image_url=url;
+  renderProducts($("#prodSearch").value);
+  const m=$("#amsg"); m.className="msg ok"; m.textContent="Image updated."; setTimeout(()=>{ if(m.className.includes("ok")) m.className="msg"; },3000);
+}
+
+let CATS=[];
+async function loadCats(){
+  const { data } = await sb.from("categories").select("id,name_en").order("sort");
+  CATS = data||[];
+  $("#np_cat").innerHTML = CATS.map(c=>`<option value="${escA(c.id)}">${esc(c.name_en)}</option>`).join("");
+}
+$("#newProdBtn").onclick=()=>{ $("#newProd").style.display = $("#newProd").style.display==="block"?"none":"block"; if(!CATS.length) loadCats(); };
+$("#np_cancel").onclick=()=>{ $("#newProd").style.display="none"; };
+$("#np_create").onclick=async ()=>{
+  const name=$("#np_name_en").value.trim();
+  if(!name){ showErr("Name (EN) is required."); return; }
+  const b=$("#np_create"); b.disabled=true; b.textContent="Creating…";
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") + "-" + Math.random().toString(36).slice(2,6);
+  const maxSort = PRODUCTS.reduce((m,p)=>Math.max(m, p.sort_order||0), 0);
+  const { data:ins, error:e1 } = await sb.from("products").insert({
+    slug, sku:$("#np_sku").value.trim()||null, name_en:name, name_es:$("#np_name_es").value.trim()||name,
+    category_id:$("#np_cat").value||null, active:true, sort_order:maxSort+1
+  }).select("id").single();
+  if(e1){ b.disabled=false; b.textContent="Create product"; showErr(e1.message); return; }
+  const cents=Math.round(parseFloat($("#np_price").value||"0")*100);
+  const { error:e2 } = await sb.from("product_prices").insert({
+    product_id:ins.id, price_cents:isNaN(cents)?0:cents, currency:"usd",
+    unit:$("#np_unit").value.trim()||"Each", min_order_qty:parseInt($("#np_moq").value||"1",10)||1, in_stock:true
+  });
+  b.disabled=false; b.textContent="Create product";
+  if(e2){ showErr("Product created but price failed: "+e2.message); }
+  ["np_name_en","np_name_es","np_sku","np_price","np_unit"].forEach(i=>$("#"+i).value="");
+  $("#np_moq").value="1"; $("#newProd").style.display="none";
+  await loadProducts();
+  $("#prodSearch").value=name; renderProducts(name);
+  const m=$("#amsg"); m.className="msg ok"; m.textContent=`Created “${name}” — upload its image below.`; setTimeout(()=>{ if(m.className.includes("ok")) m.className="msg"; },5000);
+};
 
 function showErr(t){ const m=$("#amsg"); m.className="msg err"; m.textContent=t; }
 boot();
