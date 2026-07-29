@@ -66,7 +66,8 @@
   <div class="tabs">
     <button data-tab="products" class="on">Products</button>
     <button data-tab="requests">Wholesale requests <span id="reqN"></span></button>
-    <button data-tab="orders">Orders <span id="ordN"></span></button>
+    <button data-tab="orders">Wholesale orders <span id="ordN"></span></button>
+    <button data-tab="retail">Retail orders <span id="rordN"></span></button>
   </div>
   <div class="msg" id="amsg"></div>
   <div id="products">
@@ -75,6 +76,7 @@
   </div>
   <div id="requests" style="display:none"></div>
   <div id="orders" style="display:none"></div>
+  <div id="retail" style="display:none"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -103,12 +105,12 @@ async function enter(){
   const { data:{ session } } = await sb.auth.getSession();
   $("#who").textContent = session.user.email;
   $("#loginView").style.display="none"; $("#appView").style.display="block";
-  loadProducts(); loadRequests(); loadOrders();
+  loadProducts(); loadRequests(); loadOrders(); loadRetail();
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
   const t=b.dataset.tab;
-  ["products","requests","orders"].forEach(k=>{ $("#"+k).style.display = (k===t)?"block":"none"; });
+  ["products","requests","orders","retail"].forEach(k=>{ $("#"+k).style.display = (k===t)?"block":"none"; });
 });
 
 async function loadRequests(){
@@ -166,6 +168,33 @@ async function ordStatus(id,status){
   const { error } = await sb.from("orders").update({status}).eq("id",id);
   if(error) return showErr(error.message);
   loadOrders();
+}
+
+async function loadRetail(){
+  const { data, error } = await sb.from("retail_orders")
+    .select("*, retail_order_items(product_name,size,qty,unit_price_cents)")
+    .order("created_at",{ascending:false});
+  if(error){ showErr(error.message); return; }
+  const open = data.filter(o=>o.status==="pending");
+  $("#rordN").textContent = open.length ? "("+open.length+")" : "";
+  $("#retail").innerHTML = `<div class="card"><h2>Retail orders</h2>
+    <table><thead><tr><th>Customer</th><th>Items</th><th>Subtotal</th><th>Status</th><th>Placed</th><th></th></tr></thead>
+    <tbody>${data.map(rowRet).join("")||`<tr><td colspan=6 class=muted>No retail orders yet.</td></tr>`}</tbody></table></div>`;
+  document.querySelectorAll("[data-rful]").forEach(b=>b.onclick=()=>retStatus(b.dataset.rful,"fulfilled"));
+  document.querySelectorAll("[data-rpaid]").forEach(b=>b.onclick=()=>retStatus(b.dataset.rpaid,"paid"));
+  document.querySelectorAll("[data-rcan]").forEach(b=>b.onclick=()=>retStatus(b.dataset.rcan,"cancelled"));
+}
+function rowRet(o){
+  const items = (o.retail_order_items||[]).map(i=>`${i.qty}× ${i.product_name}${i.size?" ("+i.size+")":""} @ ${money(i.unit_price_cents)}`).join("\n");
+  return `<tr><td><b>${esc(o.customer_name)}</b><br><span class="muted">${esc(o.email||"")}${o.phone?" · "+esc(o.phone):""}</span><br><span class="muted">${esc(o.address||"")}</span></td>
+    <td class="items">${esc(items)}</td><td><b>${money(o.subtotal_cents)}</b></td>
+    <td><span class="pill p-${o.status}">${o.status}</span></td><td class="muted">${fmt(o.created_at)}</td>
+    <td>${o.status==="pending"?`<button class="btn water" data-rpaid="${o.id}">Mark paid</button> <button class="btn out" data-rful="${o.id}">Fulfilled</button> <button class="btn red" data-rcan="${o.id}">Cancel</button>`:(o.status==="paid"?`<button class="btn out" data-rful="${o.id}">Fulfilled</button>`:"")}</td></tr>`;
+}
+async function retStatus(id,status){
+  const { error } = await sb.from("retail_orders").update({status}).eq("id",id);
+  if(error) return showErr(error.message);
+  loadRetail();
 }
 let PRODUCTS=[];
 const escA=(s)=>String(s==null?"":s).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
