@@ -445,6 +445,14 @@ async function saveProduct(row){
   const r4=await saveSizes(row, id);
   btn.disabled=false; btn.textContent="Save";
   if(r1.error||r2.error||r3.error||r4.error){ showErr((r1.error||r2.error||r3.error||r4.error).message); return; }
+  const unpriced=[...row.querySelectorAll(".szrow")].filter(rw=>rw.querySelector('[data-sz="size"]').value.trim() && rw.querySelector('[data-sz="r"]').value.trim()==="");
+  if(unpriced.length){
+    unpriced.forEach(rw=>{ rw.querySelector('[data-sz="r"]').style.border="2px solid #a12626"; });
+    const m=$("#amsg"); m.className="msg err";
+    m.textContent="Saved — but "+unpriced.length+" size(s) have no RETAIL price, so they will NOT appear on the website shop. Type a price in the red box and Save again.";
+    setTimeout(()=>{ if(m.className.includes("err")) m.className="msg"; },9000);
+    return;
+  }
   const p=PRODUCTS.find(x=>x.id===id);
   if(p){ Object.assign(p,pUpd);
     if(priceEl && priceEl.value.trim()!==""){ let pr2=priceOf(p); if(!pr2){ pr2={}; p.product_prices=pr2; } pr2.price_cents=Math.round(parseFloat(priceEl.value||"0")*100); pr2.unit=g("unit").value.trim(); pr2.min_order_qty=parseInt(g("moq").value||"1",10)||1; pr2.in_stock=g("in_stock").checked; }
