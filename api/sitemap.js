@@ -3,7 +3,7 @@
 // stale when products are added, renamed, or deactivated in /admin.
 const SUPABASE_URL = "https://oxbklxjsbljpjzwpizip.supabase.co";
 const ANON_KEY = "sb_publishable_2KY1gFQhNtDCask3gOTSkw_aggcMo3L"; // public read-only key
-const HOST = "https://goldenwestchem.com";
+const HOST = "https://www.goldenwestchem.com";
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const day = (d) => { try { return new Date(d).toISOString().slice(0, 10); } catch { return null; } };
@@ -12,10 +12,13 @@ export default async function handler(req, res) {
   let products = [];
   let newest = null;
   try {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 5000);
     const r = await fetch(
       SUPABASE_URL + "/rest/v1/products?select=slug,updated_at&active=eq.true&order=sort_order.asc&limit=1000",
-      { headers: { apikey: ANON_KEY, Authorization: "Bearer " + ANON_KEY } }
+      { headers: { apikey: ANON_KEY, Authorization: "Bearer " + ANON_KEY }, signal: ctl.signal }
     );
+    clearTimeout(timer);
     if (r.ok) {
       products = await r.json();
       newest = products.reduce((m, p) => (p.updated_at > (m || "") ? p.updated_at : m), null);
@@ -58,6 +61,7 @@ export default async function handler(req, res) {
     "\n</urlset>\n";
 
   res.setHeader("Content-Type", "application/xml; charset=utf-8");
+  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
   res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
   return res.status(200).send(xml);
 }
