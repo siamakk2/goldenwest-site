@@ -26,6 +26,7 @@ export default async function handler(req, res) {
     { loc: HOST + "/", changefreq: "weekly", priority: "1.0", lastmod: newest },
     { loc: HOST + "/shop", changefreq: "daily", priority: "0.9", lastmod: newest },
     { loc: HOST + "/wholesale", changefreq: "monthly", priority: "0.8", lastmod: null },
+    { loc: HOST + "/contact", changefreq: "yearly", priority: "0.6", lastmod: null },
   ];
 
   const urls = staticPages
