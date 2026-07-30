@@ -218,28 +218,55 @@
     if (qf) qf.addEventListener("submit", submitForm);
   }
 
-  function injectProductSchema() {
+  async function injectProductSchema() {
+    /* Emits an ItemList of Products WITH real retail prices pulled live from
+       Supabase. Google flags any Offer without a price as a critical error,
+       so products that have no published retail price are simply left out
+       of the structured data rather than making an empty claim. */
     try {
-      const items = D.products.map((p, i) => ({
-        "@type": "Product",
-        position: i + 1,
-        name: p.en,
-        description: p.dEn,
-        brand: { "@type": "Brand", name: p.brand },
-        category: (D.categories.find((c) => c.id === p.cat) || {}).en || "Car wash supplies",
-        ...(p.image ? { image: p.image } : {}),
-        offers: {
-          "@type": "Offer",
-          availability: "https://schema.org/InStock",
-          businessFunction: "http://purl.org/goodrelations/v1#Sell",
-          priceSpecification: { "@type": "PriceSpecification", valueAddedTaxIncluded: false },
-          seller: { "@type": "Organization", name: "Golden West Corporation" },
-        },
-      }));
+      const cfg = window.GW_CONFIG || {};
+      const prices = {}; // slug -> [{cents, in_stock}]
+      if (cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY && window.supabase) {
+        const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+        const [base, sizes] = await Promise.all([
+          sb.from("product_retail").select("retail_cents, in_stock, products(slug)").not("retail_cents", "is", null),
+          sb.from("size_prices").select("retail_cents, in_stock, products(slug)").not("retail_cents", "is", null),
+        ]);
+        [...(base.data || []), ...(sizes.data || [])].forEach((r) => {
+          const slug = r.products && r.products.slug;
+          if (!slug || !r.retail_cents) return;
+          (prices[slug] = prices[slug] || []).push({ cents: r.retail_cents, in_stock: r.in_stock !== false });
+        });
+      }
+      const usd = (c) => (Number(c) / 100).toFixed(2);
+      const items = [];
+      D.products.forEach((p) => {
+        const list = prices[p.id];
+        if (!list || !list.length) return;
+        const url = "https://goldenwestchem.com/shop?p=" + encodeURIComponent(p.id);
+        const cents = list.map((x) => x.cents).sort((a, b) => a - b);
+        const availability = "https://schema.org/" + (list.some((x) => x.in_stock) ? "InStock" : "OutOfStock");
+        const seller = { "@type": "Organization", name: "Golden West Chemical" };
+        const offers =
+          cents.length > 1
+            ? { "@type": "AggregateOffer", lowPrice: usd(cents[0]), highPrice: usd(cents[cents.length - 1]), priceCurrency: "USD", offerCount: cents.length, availability, url, seller }
+            : { "@type": "Offer", price: usd(cents[0]), priceCurrency: "USD", availability, url, seller };
+        items.push({
+          "@type": "Product",
+          name: p.en,
+          description: p.dEn,
+          url,
+          brand: { "@type": "Brand", name: p.brand },
+          category: (D.categories.find((c) => c.id === p.cat) || {}).en || "Car wash supplies",
+          ...(p.image ? { image: p.image } : {}),
+          offers,
+        });
+      });
+      if (!items.length) return;
       const ld = {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        name: "Golden West wholesale car wash products",
+        name: "Golden West car wash products",
         numberOfItems: items.length,
         itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, item: it })),
       };
