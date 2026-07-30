@@ -249,7 +249,7 @@
         const seller = { "@type": "Organization", name: "Golden West Chemical" };
         const offers =
           cents.length > 1
-            ? { "@type": "AggregateOffer", lowPrice: usd(cents[0]), highPrice: usd(cents[cents.length - 1]), priceCurrency: "USD", offerCount: cents.length, availability, url, seller }
+            ? { "@type": "Offer", price: usd(cents[0]), priceCurrency: "USD", availability, url, seller, description: "From " + usd(cents[0]) + " — multiple container sizes available" }
             : { "@type": "Offer", price: usd(cents[0]), priceCurrency: "USD", availability, url, seller };
         items.push({
           "@type": "Product",
