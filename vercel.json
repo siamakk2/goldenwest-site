@@ -35,5 +35,32 @@
       "source": "/sitemap.xml",
       "destination": "/api/sitemap"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/product/:slug",
+      "destination": "/shop?p=:slug",
+      "permanent": true
+    },
+    {
+      "source": "/product/:slug/",
+      "destination": "/shop?p=:slug",
+      "permanent": true
+    },
+    {
+      "source": "/shop/:slug",
+      "destination": "/shop?p=:slug",
+      "permanent": true
+    },
+    {
+      "source": "/product-category/:path*",
+      "destination": "/shop",
+      "permanent": true
+    },
+    {
+      "source": "/product-tag/:path*",
+      "destination": "/shop",
+      "permanent": true
+    }
   ]
 }
