@@ -322,3 +322,21 @@ html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 {
 @media(max-width:640px){.pagehead-hero{background:
   linear-gradient(160deg,rgba(11,42,69,.9) 0%,rgba(11,42,69,.55) 100%),
   var(--ph-img) center/cover no-repeat,var(--navy)}}
+
+/* ---- nav dropdown ---- */
+.nav-dd{position:relative;display:flex;align-items:center}
+.nav-dd-btn{background:none;border:0;color:#cdd9e2;font-family:inherit;font-size:.96rem;font-weight:500;cursor:pointer;white-space:nowrap;padding:0;display:flex;align-items:center;gap:5px;transition:color .15s}
+.nav-dd:hover .nav-dd-btn,.nav-dd:focus-within .nav-dd-btn{color:#fff}
+.nav-dd::after{content:"";position:absolute;top:100%;left:-10px;right:-10px;height:20px}
+.nav-dd-menu{display:none;position:absolute;top:calc(100% + 16px);left:-16px;min-width:238px;background:var(--navy-2);border:1px solid rgba(255,255,255,.13);border-radius:12px;padding:9px 0;box-shadow:0 16px 38px rgba(3,12,22,.5);z-index:80}
+.nav-dd-menu a{display:block;padding:9px 18px}
+.nav-dd-menu a:hover{background:rgba(255,255,255,.07)}
+.nav-dd:hover .nav-dd-menu,.nav-dd:focus-within .nav-dd-menu{display:block}
+@media(max-width:1280px){.nav-dd-btn{font-size:.88rem}}
+@media(max-width:1150px){
+  .nav.open .nav-dd{display:block}
+  .nav.open .nav-dd-btn{font-size:1.05rem;pointer-events:none}
+  .nav.open .nav-dd-menu{display:block;position:static;background:none;border:0;box-shadow:none;padding:8px 0 0 16px;min-width:0}
+  .nav.open .nav-dd-menu a{padding:7px 0}
+  .nav-dd::after{display:none}
+}

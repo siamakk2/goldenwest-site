@@ -32,7 +32,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/gw-icon-32.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/gw-icon-512.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/gw-icon-180.png" />
-<link rel="stylesheet" href="assets/styles.css?v=13" />
+<link rel="stylesheet" href="assets/styles.css?v=14" />
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -108,8 +108,17 @@
         <nav class="nav" id="nav" aria-label="Primary">
       <a href="/shop" data-i18n="nav_shop">Shop</a>
       <a href="/wholesale" data-i18n="nav_wholesale">Wholesale</a>
-      <a href="/wholesale-car-wash-soap" data-i18n="nav_soap">Bulk Soap</a>
-      <a href="/wholesale-detailing-supplies" data-i18n="nav_detailing">Detailing</a>
+      <div class="nav-dd">
+        <button class="nav-dd-btn" type="button" aria-haspopup="true"><span data-i18n="nav_guides">Buying Guides</span> <span aria-hidden="true">▾</span></button>
+        <div class="nav-dd-menu">
+          <a href="/car-wash-chemicals" data-i18n="nav_chem">Car Wash Chemicals</a>
+          <a href="/wholesale-car-wash-soap" data-i18n="nav_soap">Bulk Soap</a>
+          <a href="/touchless-tunnel-car-wash-chemicals" data-i18n="nav_tunnel">Tunnel &amp; Touchless</a>
+          <a href="/truck-fleet-wash-soap" data-i18n="nav_fleet">Truck &amp; Fleet</a>
+          <a href="/wholesale-detailing-supplies" data-i18n="nav_detailing">Detailing</a>
+          <a href="/car-wash-supplies-los-angeles" data-i18n="nav_la">Los Angeles Delivery</a>
+        </div>
+      </div>
       <a href="/#manufacturing" data-i18n="nav_manufacturing">Manufacturing</a>
       <a href="/#faq" data-i18n="nav_faq">FAQ</a>
       <a href="/contact" data-i18n="nav_contact">Contact</a>
@@ -261,7 +270,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/config.js?v=9"></script>
-<script src="assets/data.js?v=9"></script>
+<script src="assets/data.js?v=10"></script>
 <script src="assets/app.js?v=10"></script>
 <script>document.getElementById("yr").textContent=new Date().getFullYear();</script>
 </body>
