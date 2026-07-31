@@ -243,14 +243,32 @@
       D.products.forEach((p) => {
         const list = prices[p.id];
         if (!list || !list.length) return;
+        if (!p.image) return; // Merchant listings require an image — omit until a photo exists
         const url = "https://goldenwestchem.com/shop?p=" + encodeURIComponent(p.id);
         const cents = list.map((x) => x.cents).sort((a, b) => a - b);
         const availability = "https://schema.org/" + (list.some((x) => x.in_stock) ? "InStock" : "OutOfStock");
         const seller = { "@type": "Organization", name: "Golden West Chemical" };
+        const shippingDetails = {
+          "@type": "OfferShippingDetails",
+          shippingDestination: { "@type": "DefinedRegion", addressCountry: "US" },
+          deliveryTime: {
+            "@type": "ShippingDeliveryTime",
+            handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 2, unitCode: "DAY" },
+            transitTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 5, unitCode: "DAY" },
+          },
+        };
+        const hasMerchantReturnPolicy = {
+          "@type": "MerchantReturnPolicy",
+          applicableCountry: "US",
+          returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+          merchantReturnDays: 30,
+          returnMethod: "https://schema.org/ReturnByMail",
+          returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
+        };
         const offers =
           cents.length > 1
-            ? { "@type": "Offer", price: usd(cents[0]), priceCurrency: "USD", availability, url, seller, description: "From " + usd(cents[0]) + " — multiple container sizes available" }
-            : { "@type": "Offer", price: usd(cents[0]), priceCurrency: "USD", availability, url, seller };
+            ? { "@type": "Offer", price: usd(cents[0]), priceCurrency: "USD", availability, url, seller, shippingDetails, hasMerchantReturnPolicy, description: "From " + usd(cents[0]) + " — multiple container sizes available" }
+            : { "@type": "Offer", price: usd(cents[0]), priceCurrency: "USD", availability, url, seller, shippingDetails, hasMerchantReturnPolicy };
         items.push({
           "@type": "Product",
           name: p.en,
