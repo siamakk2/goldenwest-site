@@ -210,7 +210,7 @@ section{padding:clamp(52px,7vw,92px) 0}
   linear-gradient(180deg, rgba(11,42,69,.93), rgba(8,26,43,.96)),
   url("https://oxbklxjsbljpjzwpizip.supabase.co/storage/v1/object/public/site-assets/hero-products.png");
   background-size:cover;background-position:center;background-repeat:no-repeat}
-.ftr .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:36px;padding:56px 0 30px}
+.ftr .wrap{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:32px;padding:56px 0 30px}
 .ftr h4{font-family:var(--font-d);color:#fff;font-size:1.05rem;letter-spacing:.02em;margin-bottom:12px}
 .ftr .brand{margin-bottom:14px}
 .ftr a:hover{color:#fff}

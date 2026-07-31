@@ -32,6 +32,10 @@ export default async function handler(req, res) {
     { loc: HOST + "/contact", changefreq: "yearly", priority: "0.6", lastmod: null },
     { loc: HOST + "/wholesale-car-wash-soap", changefreq: "monthly", priority: "0.8", lastmod: null },
     { loc: HOST + "/wholesale-detailing-supplies", changefreq: "monthly", priority: "0.8", lastmod: null },
+    { loc: HOST + "/car-wash-chemicals", changefreq: "monthly", priority: "0.8", lastmod: null },
+    { loc: HOST + "/car-wash-supplies-los-angeles", changefreq: "monthly", priority: "0.8", lastmod: null },
+    { loc: HOST + "/truck-fleet-wash-soap", changefreq: "monthly", priority: "0.8", lastmod: null },
+    { loc: HOST + "/touchless-tunnel-car-wash-chemicals", changefreq: "monthly", priority: "0.8", lastmod: null },
   ];
 
   const urls = staticPages
