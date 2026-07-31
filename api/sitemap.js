@@ -36,6 +36,18 @@ export default async function handler(req, res) {
     { loc: HOST + "/car-wash-supplies-los-angeles", changefreq: "monthly", priority: "0.8", lastmod: null },
     { loc: HOST + "/truck-fleet-wash-soap", changefreq: "monthly", priority: "0.8", lastmod: null },
     { loc: HOST + "/touchless-tunnel-car-wash-chemicals", changefreq: "monthly", priority: "0.8", lastmod: null },
+    { loc: HOST + "/es/car-wash-chemicals", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/es/car-wash-supplies-los-angeles", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/es/truck-fleet-wash-soap", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/es/touchless-tunnel-car-wash-chemicals", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/es/wholesale-car-wash-soap", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/es/wholesale-detailing-supplies", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/ko/car-wash-chemicals", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/ko/car-wash-supplies-los-angeles", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/ko/truck-fleet-wash-soap", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/ko/touchless-tunnel-car-wash-chemicals", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/ko/wholesale-car-wash-soap", changefreq: "monthly", priority: "0.7", lastmod: null },
+    { loc: HOST + "/ko/wholesale-detailing-supplies", changefreq: "monthly", priority: "0.7", lastmod: null },
   ];
 
   const urls = staticPages
