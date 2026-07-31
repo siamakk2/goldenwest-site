@@ -307,3 +307,18 @@ section{padding:clamp(52px,7vw,92px) 0}
 html[lang="ko"] { word-break: keep-all; line-break: strict; }
 html[lang="ko"] .hero h1,
 html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 { word-break: keep-all; }
+
+/* ---- landing page photo heroes ---- */
+.pagehead-hero{background:
+  linear-gradient(100deg,rgba(11,42,69,.86) 0%,rgba(11,42,69,.62) 38%,rgba(11,42,69,.28) 70%,rgba(18,69,155,.18) 100%),
+  var(--ph-img) center/cover no-repeat,var(--navy);
+  padding:clamp(64px,9vw,118px) 0 clamp(44px,6vw,68px)}
+.pagehead-hero h1{text-shadow:0 2px 18px rgba(4,16,28,.45)}
+.pagehead-hero>.wrap>p:last-of-type{color:#dce7f0;text-shadow:0 1px 12px rgba(4,16,28,.5)}
+.ph-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.ph-cta .btn{border-radius:10px;padding:.72em 1.25em;font-weight:700;text-decoration:none}
+.btn-ghostw{border:1.6px solid rgba(255,255,255,.85);color:#fff;background:rgba(11,42,69,.25);backdrop-filter:blur(2px)}
+.btn-ghostw:hover{background:rgba(255,255,255,.14)}
+@media(max-width:640px){.pagehead-hero{background:
+  linear-gradient(160deg,rgba(11,42,69,.9) 0%,rgba(11,42,69,.55) 100%),
+  var(--ph-img) center/cover no-repeat,var(--navy)}}
