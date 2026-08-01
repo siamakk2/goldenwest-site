@@ -10,7 +10,7 @@
 
   let priceMap = {};                 // slug -> { product_id, cents, in_stock }
   let cart = {};                     // key(slug|size) -> { slug, product_id, size, qty, name, cents }
-  let sizeMap = {}, freightRules = [];
+  let sizeMap = {}, freightRules = [], shipTiers = [], restrictedSet = {};
   try { cart = JSON.parse(localStorage.getItem("gw_retail_cart") || "{}"); } catch (e) { cart = {}; }
 
   const money = (c) => "$" + (Number(c || 0) / 100).toFixed(2);
@@ -281,13 +281,15 @@
 
   /* ---------- data + init ---------- */
   async function loadPrices() {
-    const [{ data, error }, { data: sp }, { data: fr }] = await Promise.all([
+    const [{ data, error }, { data: sp }, { data: fr }, { data: st }, { data: rp }] = await Promise.all([
       sb.from("product_retail").select("product_id, retail_cents, in_stock, products(slug)"),
-      sb.from("size_prices").select("product_id, size, retail_cents, in_stock, products(slug)").not("retail_cents", "is", null),
+      sb.from("size_prices").select("product_id, size, retail_cents, weight_lb, in_stock, products(slug)").not("retail_cents", "is", null),
       sb.from("freight_rules").select("zip_prefix, base_cents, per_gallon_cents, free_over_cents"),
+      sb.from("shipping_tiers").select("max_lb, price_cents").eq("active", true).order("max_lb"),
+      sb.from("products").select("slug").eq("ship_restricted", true),
     ]);
     if (error || !data) return;
-    priceMap = {}; sizeMap = {}; freightRules = fr || [];
+    priceMap = {}; sizeMap = {}; freightRules = fr || []; shipTiers = st || []; restrictedSet = {}; (rp || []).forEach((x) => (restrictedSet[x.slug] = true));
     data.forEach((r) => {
       const slug = r.products && r.products.slug;
       if (slug) priceMap[slug] = { product_id: r.product_id, cents: r.retail_cents, in_stock: r.in_stock };
@@ -295,12 +297,34 @@
     (sp || []).forEach((r) => {
       const slug = r.products && r.products.slug;
       if (!slug) return;
-      (sizeMap[slug] = sizeMap[slug] || []).push({ size: r.size, cents: r.retail_cents, in_stock: r.in_stock });
+      (sizeMap[slug] = sizeMap[slug] || []).push({ size: r.size, cents: r.retail_cents, weight: r.weight_lb, in_stock: r.in_stock });
     });
     Object.values(sizeMap).forEach((a) => a.sort((x, y) => gallonsOf(x.size) - gallonsOf(y.size)));
   }
   const gallonsOf = (s) => { const m = /([\d.]+)\s*gal/i.exec(s || ""); return m ? parseFloat(m[1]) : 0; };
   function cartGallons() { return Object.values(cart).reduce((t, c) => t + gallonsOf(c.size) * c.qty, 0); }
+  const HEAVY = /drum|tote|30\s*gal|55\s*gal|275/i;
+  function pieceWeight(c) {
+    const rec = (sizeMap[c.slug] || []).find((x) => x.size === c.size);
+    if (rec && rec.weight != null) return Number(rec.weight);
+    const g = gallonsOf(c.size);
+    return g ? g * 8.6 + 1.5 : 3;
+  }
+  function cartHasHeavyOrRestricted() {
+    return Object.values(cart).some((c) => HEAVY.test(c.size || "") || pieceWeight(c) > (shipTiers.length ? shipTiers[shipTiers.length - 1].max_lb : 70) || restrictedSet[c.slug]);
+  }
+  function cartWeight() { return Object.values(cart).reduce((t, c) => t + pieceWeight(c) * c.qty, 0); }
+  function shippingFor(zip) {
+    const z = String(zip || "").replace(/\D/g, "").slice(0, 5);
+    if (z.length < 5) return { mode: "none" };
+    const local = freightFor(z);
+    if (local != null) return { mode: "local", cents: local };
+    if (!shipTiers.length) return { mode: "quote" };
+    if (cartHasHeavyOrRestricted()) return { mode: "quote" };
+    const w = cartWeight();
+    const tier = shipTiers.find((t) => w <= Number(t.max_lb));
+    return tier ? { mode: "ups", cents: tier.price_cents, lb: Math.ceil(w) } : { mode: "quote" };
+  }
   function freightFor(zip) {
     const z = String(zip || "").replace(/\D/g, "").slice(0, 5);
     if (z.length < 5 || !freightRules.length) return null;

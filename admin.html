@@ -276,7 +276,10 @@ async function retStatus(id,status){
 
 /* ---------- freight rules ---------- */
 async function loadFreight(){
-  const { data, error } = await sb.from("freight_rules").select("*").order("zip_prefix");
+  const [{ data, error }, { data:tiers }] = await Promise.all([
+    sb.from("freight_rules").select("*").order("zip_prefix"),
+    sb.from("shipping_tiers").select("*").order("max_lb")
+  ]);
   if(error){ showErr(error.message); return; }
   $("#freight").innerHTML = `<div class="card"><h2>Freight by ZIP code</h2>
     <p class="muted" style="margin:0 0 14px">Delivery charge = <b>base fee</b> + <b>per-gallon rate</b> × total gallons in the order. The most specific ZIP prefix wins ("90" beats "9"). Set "free over" to give free delivery above a subtotal. If no rule matches a customer's ZIP, the order still goes through and freight is quoted by phone.</p>
@@ -285,7 +288,18 @@ async function loadFreight(){
     <div style="margin-top:14px;display:flex;gap:10px">
       <button class="btn water" id="frAdd">+ Add rule</button>
       <button class="btn amber" id="frSave">Save freight rules</button>
+    </div></div>
+    <div class="card"><h2>National shipping (UPS estimate, by weight)</h2>
+    <p class="muted" style="margin:0 0 14px">For orders <b>outside</b> your ZIP rules above. The customer pays the price of the smallest tier that fits the order's total shipping weight. Orders heavier than the last tier — or any drum, tote, or restricted item — check out as <b>"freight confirmed within 1 business day."</b></p>
+    <table style="max-width:420px"><thead><tr><th>Up to (lb)</th><th>Price</th><th></th></tr></thead>
+    <tbody id="stRows">${(tiers||[]).map(stRow).join("")||""}</tbody></table>
+    <div style="margin-top:14px;display:flex;gap:10px">
+      <button class="btn water" id="stAdd">+ Add tier</button>
+      <button class="btn amber" id="stSave">Save shipping tiers</button>
     </div></div>`;
+  $("#stAdd").onclick=()=>{ $("#stRows").insertAdjacentHTML("beforeend", stRow({max_lb:"",price_cents:0})); $("#stRows").lastElementChild.querySelector(".del").onclick=(e)=>e.target.closest("tr").remove(); };
+  $("#stSave").onclick=saveTiers;
+  document.querySelectorAll("#stRows .del").forEach(b=>b.onclick=()=>b.closest("tr").remove());
   $("#frAdd").onclick=()=>{
     const tb=$("#frRows"); const ph=tb.querySelector(".muted"); if(ph) ph.closest("tr").remove();
     tb.insertAdjacentHTML("beforeend", frRow({zip_prefix:"",label:"",base_cents:0,per_gallon_cents:0,free_over_cents:null,active:true}));
@@ -293,6 +307,25 @@ async function loadFreight(){
   };
   $("#frSave").onclick=saveFreight;
   document.querySelectorAll("#frRows .del").forEach(b=>b.onclick=()=>b.closest("tr").remove());
+}
+function stRow(r){
+  return `<tr><td><input data-st="lb" inputmode="decimal" value="${r.max_lb!=null?r.max_lb:""}" style="width:90px"></td>
+    <td><div class="in"><span>$</span><input data-st="p" inputmode="decimal" value="${r.price_cents!=null?(r.price_cents/100).toFixed(2):""}" style="width:90px"></div></td>
+    <td><button type="button" class="del" style="background:none;border:0;color:#a12626;cursor:pointer">\u2715</button></td></tr>`;
+}
+async function saveTiers(){
+  const rows=[...document.querySelectorAll("#stRows tr")]; const ups=[];
+  for(const tr of rows){
+    const lb=parseFloat(tr.querySelector('[data-st="lb"]').value.replace(/[^0-9.]/g,""));
+    const p=moneyCents(tr.querySelector('[data-st="p"]').value);
+    if(!lb||p===null){ showErr("Each tier needs a weight and a price."); return; }
+    ups.push({max_lb:lb, price_cents:p, active:true});
+  }
+  const { error:de } = await sb.from("shipping_tiers").delete().gte("id",0);
+  if(de) return showErr(de.message);
+  if(ups.length){ const { error:ie } = await sb.from("shipping_tiers").insert(ups); if(ie) return showErr(ie.message); }
+  const m=$("#amsg"); m.className="msg ok"; m.textContent="Shipping tiers saved."; setTimeout(()=>{ if(m.className.includes("ok")) m.className="msg"; },3000);
+  loadFreight();
 }
 function frRow(r){
   return `<tr data-frid="${r.id||""}">
@@ -347,6 +380,7 @@ function szRow(r){
     <input type="text" data-sz="size" value="${escA(r.size||"")}" placeholder="e.g. 5 Gallon">
     <div class="in"><span>$</span><input data-sz="w" inputmode="decimal" value="${r.wholesale_cents!=null?(r.wholesale_cents/100).toFixed(2):""}" placeholder="wholesale"></div>
     <div class="in"><span>$</span><input data-sz="r" inputmode="decimal" value="${r.retail_cents!=null?(r.retail_cents/100).toFixed(2):""}" placeholder="retail"></div>
+    <div class="in"><input data-sz="wt" inputmode="decimal" value="${r.weight_lb!=null?r.weight_lb:""}" placeholder="lb" style="width:64px;min-width:64px"><span style="color:#8aa0af">lb</span></div>
     <label class="tog"><input type="checkbox" data-sz="stock" ${r.in_stock===false?"":"checked"}> In stock</label>
     <button type="button" class="del" title="Remove size">✕</button>
   </div>`;
@@ -372,9 +406,11 @@ async function saveSizes(row, id){
     seen.add(size.toLowerCase());
     const w=rw.querySelector('[data-sz="w"]').value.trim();
     const r=rw.querySelector('[data-sz="r"]').value.trim();
+    const wt=rw.querySelector('[data-sz="wt"]').value.trim();
     ups.push({ product_id:id, size,
       wholesale_cents: w===""?null:moneyCents(w),
       retail_cents: r===""?null:moneyCents(r),
+      weight_lb: wt===""?null:(parseFloat(wt.replace(/[^0-9.]/g,""))||null),
       in_stock: rw.querySelector('[data-sz="stock"]').checked });
   });
   if(bad) return { error:{ message:bad } };
@@ -390,7 +426,7 @@ async function saveSizes(row, id){
 
 async function loadProducts(){
   const { data, error } = await sb.from("products")
-    .select("id,slug,sku,upc,name_en,name_es,desc_en,desc_es,active,sort_order,image_url,category_id,product_prices(price_cents,unit,min_order_qty,in_stock,currency),product_retail(retail_cents,in_stock),size_prices(size,wholesale_cents,retail_cents,in_stock)")
+    .select("id,slug,sku,upc,ship_restricted,name_en,name_es,desc_en,desc_es,active,sort_order,image_url,category_id,product_prices(price_cents,unit,min_order_qty,in_stock,currency),product_retail(retail_cents,in_stock),size_prices(size,wholesale_cents,retail_cents,weight_lb,in_stock)")
     .order("sort_order");
   if(error){ $("#prodList").innerHTML=`<div class="msg err">${esc(error.message)}</div>`; return; }
   PRODUCTS = data||[];
@@ -427,7 +463,7 @@ function renderProducts(q){
       <div class="szfull">
         <div class="szbox">
           <h4>Container sizes &amp; prices</h4>
-          <div class="szhead"><b>Size</b><b>Wholesale $</b><b>Retail $</b></div>
+          <div class="szhead"><b>Size</b><b>Wholesale $</b><b>Retail $</b><b>Ship weight</b></div>
           <div class="szrows">${(Array.isArray(p.size_prices)?p.size_prices:(p.size_prices?[p.size_prices]:[])).sort((a,b)=>gal(a.size)-gal(b.size)).map(szRow).join("")}</div>
           <div class="szadd">${szChips(p).map(z=>`<button type="button" data-addsz="${escA(z)}">+ ${esc(z)}</button>`).join("")}<button type="button" data-addsz="">+ Custom size</button></div>
         </div>
@@ -435,6 +471,7 @@ function renderProducts(q){
       <div class="act">
         <label class="tog"><input type="checkbox" data-f="active" ${p.active?"checked":""}> Active</label>
         <label class="tog"><input type="checkbox" data-f="in_stock" ${(!pr||pr.in_stock)?"checked":""}> In stock</label>
+        <label class="tog" title="Solvent/hazmat items that can only ship locally or by ground freight"><input type="checkbox" data-f="restricted" ${p.ship_restricted?"checked":""}> Restricted shipping</label>
         <button class="btn amber" data-save>Save</button>
       </div>
     </div>`;
@@ -450,7 +487,7 @@ async function saveProduct(row){
   const btn=row.querySelector("[data-save]"); btn.disabled=true; btn.textContent="Saving…";
   const upcRaw=(g("upc")?g("upc").value:"").replace(/[^0-9]/g,"");
   if(upcRaw && (upcRaw.length<8 || upcRaw.length>14)){ btn.disabled=false; btn.textContent="Save"; showErr("UPC must be 8\u201314 digits (usually 12). You typed "+upcRaw.length+"."); return; }
-  const pUpd={ name_en:g("name_en").value.trim(), name_es:g("name_es").value.trim(), desc_en:g("desc_en").value.trim(), desc_es:g("desc_es").value.trim(), active:g("active").checked, upc: upcRaw||null };
+  const pUpd={ name_en:g("name_en").value.trim(), name_es:g("name_es").value.trim(), desc_en:g("desc_en").value.trim(), desc_es:g("desc_es").value.trim(), active:g("active").checked, upc: upcRaw||null, ship_restricted: g("restricted")?g("restricted").checked:false };
   const r1=await sb.from("products").update(pUpd).eq("id",id);
   let r2={error:null}; const priceEl=g("price");
   if(priceEl && priceEl.value.trim()!==""){
