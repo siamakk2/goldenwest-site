@@ -49,6 +49,13 @@
   .szbox{grid-column:1 / -1;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
   .szbox h4{font-family:"Barlow Semi Condensed";font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 6px}
   .szrow{display:grid;grid-template-columns:1.2fr .8fr .8fr auto auto;gap:8px;align-items:center;margin-bottom:6px}
+  @media(max-width:860px){
+    .prod{grid-template-columns:1fr !important}
+    .prod input.pin,.prod textarea.pin,.szrow input{font-size:16px !important;padding:.55em .6em}
+    .szrow{grid-template-columns:1fr;gap:6px;border-bottom:1px dashed var(--line);padding-bottom:8px}
+    .szrow .in input{font-size:16px}
+    .thbox{max-width:180px}
+  }
   .szrow input[type=text]{border:1.5px solid var(--line);border-radius:7px;padding:.4em .5em;font-size:.85rem}
   .szrow .in{display:flex;align-items:center;gap:4px}
   .szrow .in input{width:100%;border:1.5px solid var(--line);border-radius:7px;padding:.4em .5em;font-size:.85rem}
@@ -360,8 +367,8 @@ async function saveSizes(row, id){
     const w=rw.querySelector('[data-sz="w"]').value.trim();
     const r=rw.querySelector('[data-sz="r"]').value.trim();
     ups.push({ product_id:id, size,
-      wholesale_cents: w===""?null:Math.round(parseFloat(w)*100),
-      retail_cents: r===""?null:Math.round(parseFloat(r)*100),
+      wholesale_cents: w===""?null:moneyCents(w),
+      retail_cents: r===""?null:moneyCents(r),
       in_stock: rw.querySelector('[data-sz="stock"]').checked });
   });
   if(bad) return { error:{ message:bad } };
@@ -377,7 +384,7 @@ async function saveSizes(row, id){
 
 async function loadProducts(){
   const { data, error } = await sb.from("products")
-    .select("id,slug,sku,name_en,name_es,desc_en,desc_es,active,sort_order,image_url,category_id,product_prices(price_cents,unit,min_order_qty,in_stock,currency),product_retail(retail_cents,in_stock),size_prices(size,wholesale_cents,retail_cents,in_stock)")
+    .select("id,slug,sku,upc,name_en,name_es,desc_en,desc_es,active,sort_order,image_url,category_id,product_prices(price_cents,unit,min_order_qty,in_stock,currency),product_retail(retail_cents,in_stock),size_prices(size,wholesale_cents,retail_cents,in_stock)")
     .order("sort_order");
   if(error){ $("#prodList").innerHTML=`<div class="msg err">${esc(error.message)}</div>`; return; }
   PRODUCTS = data||[];
@@ -409,6 +416,7 @@ function renderProducts(q){
         <label>Retail price</label><div class="in"><span>$</span><input class="pin sm" data-f="retail" value="${rdollars}"></div>
         <label>Unit</label><input class="pin" data-f="unit" value="${escA(pr?pr.unit:"")}">
         <label>Min order qty</label><input class="pin sm" data-f="moq" value="${escA(pr?pr.min_order_qty:"")}">
+        <label>UPC / barcode <span style="text-transform:none;letter-spacing:0;color:#8aa0af">(for Google Merchant)</span></label><input class="pin" data-f="upc" inputmode="numeric" placeholder="12-digit UPC" value="${escA(p.upc||"")}">
         <div class="szbox">
           <h4>Container sizes &amp; prices <span style="text-transform:none;letter-spacing:0">(wholesale / retail per container)</span></h4>
           <div class="szrows">${(Array.isArray(p.size_prices)?p.size_prices:(p.size_prices?[p.size_prices]:[])).sort((a,b)=>gal(a.size)-gal(b.size)).map(szRow).join("")}</div>
@@ -427,20 +435,25 @@ function renderProducts(q){
   document.querySelectorAll("#prodList [data-uplfile]").forEach(inp=>inp.onchange=()=>{ if(inp.files&&inp.files[0]) uploadImage(inp.closest(".prod"), inp.files[0]); });
   bindSizeEditor(document.getElementById("prodList"));
 }
+function moneyCents(v){ const n=parseFloat(String(v).replace(/[^0-9.]/g,"")); return isNaN(n)?null:Math.round(n*100); }
 async function saveProduct(row){
   const id=row.dataset.id, g=(f)=>row.querySelector(`[data-f="${f}"]`);
   const btn=row.querySelector("[data-save]"); btn.disabled=true; btn.textContent="Saving…";
-  const pUpd={ name_en:g("name_en").value.trim(), name_es:g("name_es").value.trim(), desc_en:g("desc_en").value.trim(), desc_es:g("desc_es").value.trim(), active:g("active").checked };
+  const upcRaw=(g("upc")?g("upc").value:"").replace(/[^0-9]/g,"");
+  if(upcRaw && (upcRaw.length<8 || upcRaw.length>14)){ btn.disabled=false; btn.textContent="Save"; showErr("UPC must be 8\u201314 digits (usually 12). You typed "+upcRaw.length+"."); return; }
+  const pUpd={ name_en:g("name_en").value.trim(), name_es:g("name_es").value.trim(), desc_en:g("desc_en").value.trim(), desc_es:g("desc_es").value.trim(), active:g("active").checked, upc: upcRaw||null };
   const r1=await sb.from("products").update(pUpd).eq("id",id);
   let r2={error:null}; const priceEl=g("price");
   if(priceEl && priceEl.value.trim()!==""){
-    const cents=Math.round(parseFloat(priceEl.value||"0")*100);
-    r2=await sb.from("product_prices").upsert({ product_id:id, price_cents:isNaN(cents)?0:cents, currency:"usd", unit:g("unit").value.trim()||null, min_order_qty:parseInt(g("moq").value||"1",10)||1, in_stock:g("in_stock").checked }, { onConflict:"product_id" });
+    const cents=moneyCents(priceEl.value);
+    if(cents===null){ btn.disabled=false; btn.textContent="Save"; showErr("Wholesale price \u201C"+priceEl.value+"\u201D is not a number \u2014 use digits like 24.50"); return; }
+    r2=await sb.from("product_prices").upsert({ product_id:id, price_cents:cents, currency:"usd", unit:g("unit").value.trim()||null, min_order_qty:parseInt(g("moq").value||"1",10)||1, in_stock:g("in_stock").checked }, { onConflict:"product_id" });
   }
   let r3={error:null}; const retEl=g("retail");
   if(retEl && retEl.value.trim()!==""){
-    const rcents=Math.round(parseFloat(retEl.value||"0")*100);
-    r3=await sb.from("product_retail").upsert({ product_id:id, retail_cents:isNaN(rcents)?0:rcents, in_stock:g("in_stock").checked }, { onConflict:"product_id" });
+    const rcents=moneyCents(retEl.value);
+    if(rcents===null){ btn.disabled=false; btn.textContent="Save"; showErr("Retail price \u201C"+retEl.value+"\u201D is not a number \u2014 use digits like 24.50"); return; }
+    r3=await sb.from("product_retail").upsert({ product_id:id, retail_cents:rcents, in_stock:g("in_stock").checked }, { onConflict:"product_id" });
   }
   const r4=await saveSizes(row, id);
   btn.disabled=false; btn.textContent="Save";
@@ -455,8 +468,8 @@ async function saveProduct(row){
   }
   const p=PRODUCTS.find(x=>x.id===id);
   if(p){ Object.assign(p,pUpd);
-    if(priceEl && priceEl.value.trim()!==""){ let pr2=priceOf(p); if(!pr2){ pr2={}; p.product_prices=pr2; } pr2.price_cents=Math.round(parseFloat(priceEl.value||"0")*100); pr2.unit=g("unit").value.trim(); pr2.min_order_qty=parseInt(g("moq").value||"1",10)||1; pr2.in_stock=g("in_stock").checked; }
-    if(retEl && retEl.value.trim()!==""){ let ro=retailOf(p); if(!ro){ ro={}; p.product_retail=ro; } ro.retail_cents=Math.round(parseFloat(retEl.value||"0")*100); ro.in_stock=g("in_stock").checked; } }
+    if(priceEl && priceEl.value.trim()!==""){ let pr2=priceOf(p); if(!pr2){ pr2={}; p.product_prices=pr2; } pr2.price_cents=moneyCents(priceEl.value)||0; pr2.unit=g("unit").value.trim(); pr2.min_order_qty=parseInt(g("moq").value||"1",10)||1; pr2.in_stock=g("in_stock").checked; }
+    if(retEl && retEl.value.trim()!==""){ let ro=retailOf(p); if(!ro){ ro={}; p.product_retail=ro; } ro.retail_cents=moneyCents(retEl.value)||0; ro.in_stock=g("in_stock").checked; } }
   const m=$("#amsg"); m.className="msg ok"; m.textContent=`Saved “${pUpd.name_en}”.`; setTimeout(()=>{ if(m.className.includes("ok")) m.className="msg"; },3000);
 }
 document.addEventListener("input",(e)=>{ if(e.target && e.target.id==="prodSearch") renderProducts(e.target.value); });

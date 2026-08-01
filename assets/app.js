@@ -319,16 +319,18 @@
     try {
       const cfg = window.GW_CONFIG || {};
       const prices = {}; // slug -> [{cents, in_stock}]
+      const upcs = {}; // slug -> gtin
       if (cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY && window.supabase) {
         const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
         const [base, sizes] = await Promise.all([
-          sb.from("product_retail").select("retail_cents, in_stock, products(slug)").not("retail_cents", "is", null),
-          sb.from("size_prices").select("retail_cents, in_stock, products(slug)").not("retail_cents", "is", null),
+          sb.from("product_retail").select("retail_cents, in_stock, products(slug,upc)").not("retail_cents", "is", null),
+          sb.from("size_prices").select("retail_cents, in_stock, products(slug,upc)").not("retail_cents", "is", null),
         ]);
         [...(base.data || []), ...(sizes.data || [])].forEach((r) => {
           const slug = r.products && r.products.slug;
           if (!slug || !r.retail_cents) return;
           (prices[slug] = prices[slug] || []).push({ cents: r.retail_cents, in_stock: r.in_stock !== false });
+          if (r.products.upc) upcs[slug] = r.products.upc;
         });
       }
       const usd = (c) => (Number(c) / 100).toFixed(2);
@@ -368,6 +370,7 @@
           description: p.dEn,
           url,
           brand: { "@type": "Brand", name: p.brand },
+          ...(upcs[p.id] ? { gtin: upcs[p.id] } : {}),
           category: (D.categories.find((c) => c.id === p.cat) || {}).en || "Car wash supplies",
           ...(p.image ? { image: p.image } : {}),
           offers,
