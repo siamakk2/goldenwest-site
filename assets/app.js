@@ -1,6 +1,98 @@
 /* ===== Golden West — front-end app ===== */
 (function () {
   const D = window.GW;
+
+  /* ================= AI site search ================= */
+  function initSearch() {
+    const right = document.querySelector(".hdr-right");
+    if (!right || document.querySelector(".srch-btn")) return;
+    const t = (k, fb) => (window.GW && GW.i18n && GW.i18n[lang] && GW.i18n[lang][k]) || fb;
+
+    const btn = document.createElement("button");
+    btn.className = "srch-btn"; btn.setAttribute("aria-label", "Search"); btn.innerHTML = "&#128269;";
+    right.insertBefore(btn, right.firstChild);
+
+    const ov = document.createElement("div");
+    ov.className = "srch-ov";
+    ov.innerHTML = `<div class="srch-box" role="dialog" aria-modal="true">
+      <div class="srch-bar"><span>&#128269;</span><input type="search" autocomplete="off" /><button class="srch-x" aria-label="Close">&times;</button></div>
+      <div class="srch-ai" hidden><div class="srch-ai-a"></div><div class="srch-ai-l"></div><div class="srch-ai-p"></div></div>
+      <div class="srch-res"></div>
+      <div class="srch-hint"></div>
+    </div>`;
+    document.body.appendChild(ov);
+    const input = ov.querySelector("input"), res = ov.querySelector(".srch-res"),
+      aiBox = ov.querySelector(".srch-ai"), aiA = ov.querySelector(".srch-ai-a"),
+      aiL = ov.querySelector(".srch-ai-l"), aiP = ov.querySelector(".srch-ai-p"),
+      hint = ov.querySelector(".srch-hint");
+
+    const PAGES = {
+      en: [["Car Wash Chemicals","/car-wash-chemicals"],["Bulk Car Wash Soap","/wholesale-car-wash-soap"],["Tunnel & Touchless Chemicals","/touchless-tunnel-car-wash-chemicals"],["Truck & Fleet Wash","/truck-fleet-wash-soap"],["Los Angeles Supplies & Delivery","/car-wash-supplies-los-angeles"],["Detailing Supplies","/wholesale-detailing-supplies"],["Shop — all 295 products","/shop"],["Wholesale Accounts & Pricing","/wholesale"],["Contact / Hours / Address","/contact"],["Manufacturing","/#manufacturing"],["FAQ","/#faq"]],
+      es: [["Químicos para Autolavado","/es/car-wash-chemicals"],["Jabón al Mayoreo","/es/wholesale-car-wash-soap"],["Túnel y Sin Contacto","/es/touchless-tunnel-car-wash-chemicals"],["Camiones y Flotillas","/es/truck-fleet-wash-soap"],["Insumos en Los Ángeles","/es/car-wash-supplies-los-angeles"],["Insumos de Detallado","/es/wholesale-detailing-supplies"],["Tienda — 295 productos","/shop"],["Mayoreo y Precios","/wholesale"],["Contacto / Horario","/contact"]],
+      ko: [["세차 약품","/ko/car-wash-chemicals"],["대량 세차 세제","/ko/wholesale-car-wash-soap"],["터널·터치리스","/ko/touchless-tunnel-car-wash-chemicals"],["트럭·플릿 세차","/ko/truck-fleet-wash-soap"],["LA 세차 용품·배송","/ko/car-wash-supplies-los-angeles"],["디테일링 용품","/ko/wholesale-detailing-supplies"],["쇼핑 — 295개 제품","/shop"],["도매 계정·단가","/wholesale"],["문의 / 영업시간","/contact"]],
+    };
+
+    const norm = (s) => String(s || "").toLowerCase();
+    function local(q) {
+      const n = norm(q), toks = n.split(/[^\p{L}\p{N}]+/u).filter((x) => x.length >= 2);
+      if (!toks.length) return { prods: [], pages: [] };
+      const score = (hay) => toks.reduce((a, tk) => a + (hay.indexOf(tk) >= 0 ? 1 : 0), 0);
+      const prods = (D.products || [])
+        .map((p) => ({ p, s: score(norm([p.en, p.es, p.ko, p.dEn, p.dEs, p.brand].join(" "))) }))
+        .filter((x) => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 8).map((x) => x.p);
+      const pages = (PAGES[lang] || PAGES.en).filter(([lbl]) => score(norm(lbl)) > 0).slice(0, 4);
+      return { prods, pages };
+    }
+
+    function pname(p) { return lang === "es" ? (p.es || p.en) : lang === "ko" ? (p.ko || p.en) : p.en; }
+    function render(q) {
+      const { prods, pages } = local(q);
+      let h = "";
+      if (pages.length) h += `<div class="srch-h">${t("search_pages","Pages")}</div>` +
+        pages.map(([l, u]) => `<a class="srch-row" href="${u}"><span class="srch-ico">&#9656;</span>${l}</a>`).join("");
+      if (prods.length) h += `<div class="srch-h">${t("search_products","Products")}</div>` +
+        prods.map((p) => `<a class="srch-row" href="/shop?p=${encodeURIComponent(p.id)}">` +
+          (p.image ? `<img src="${p.image}" alt="" loading="lazy" />` : `<span class="srch-ico">&#9642;</span>`) +
+          `<span>${pname(p)}</span></a>`).join("");
+      res.innerHTML = h;
+      hint.textContent = q.trim().length >= 2 ? t("search_ask", "Press Enter to ask AI \u2192 answers only from this site") : "";
+    }
+
+    let aiTimer = null, aiSeq = 0;
+    async function askAI(q) {
+      const seq = ++aiSeq;
+      aiBox.hidden = false; aiA.textContent = t("search_thinking", "Thinking\u2026"); aiL.innerHTML = ""; aiP.innerHTML = "";
+      try {
+        const cfg = window.GW_CONFIG || {};
+        const r = await fetch("https://oxbklxjsbljpjzwpizip.supabase.co/functions/v1/sitesearch", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ k: "gw-search-2026", q, lang }),
+        });
+        const d = await r.json();
+        if (seq !== aiSeq) return;
+        if (!d.ok) { aiA.textContent = t("search_err", "Search is unavailable right now."); return; }
+        aiA.textContent = d.answer || "";
+        aiL.innerHTML = (d.links || []).map((l) => `<a href="${l.u}">${l.t}</a>`).join("");
+        aiP.innerHTML = (d.products || []).map((p) => `<a class="srch-row" href="/shop?p=${encodeURIComponent(p.slug)}">` +
+          (p.image ? `<img src="${p.image}" alt="" loading="lazy" />` : "") + `<span>${p.name}</span></a>`).join("");
+      } catch (_e) { if (seq === aiSeq) aiA.textContent = t("search_err", "Search is unavailable right now."); }
+    }
+
+    function open() { ov.classList.add("on"); input.value = ""; res.innerHTML = ""; aiBox.hidden = true; hint.textContent = ""; input.setAttribute("placeholder", t("search_ph", "Search products, guides, questions\u2026")); setTimeout(() => input.focus(), 30); }
+    function close() { ov.classList.remove("on"); }
+    btn.addEventListener("click", open);
+    ov.querySelector(".srch-x").addEventListener("click", close);
+    ov.addEventListener("click", (e) => { if (e.target === ov) close(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    input.addEventListener("input", () => {
+      render(input.value);
+      clearTimeout(aiTimer);
+      const q = input.value.trim();
+      if (q.length >= 8) aiTimer = setTimeout(() => askAI(q), 1200);
+    });
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter" && input.value.trim().length >= 2) { clearTimeout(aiTimer); askAI(input.value.trim()); } });
+  }
+
   let lang = localStorage.getItem("gw_lang") || "en";
 
   /* ---------- optional: load live products from Supabase ----------
@@ -201,6 +293,7 @@
     // lang toggle
     $$(".lang button").forEach((b) => b.addEventListener("click", () => {
       lang = b.dataset.lang; localStorage.setItem("gw_lang", lang); applyI18n();
+  initSearch();
     }));
     // mobile nav
     const burger = $("#burger"), nav = $("#nav");

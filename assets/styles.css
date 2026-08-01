@@ -340,3 +340,27 @@ html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 {
   .nav.open .nav-dd-menu a{padding:7px 0}
   .nav-dd::after{display:none}
 }
+
+/* ---- AI site search ---- */
+.srch-btn{background:none;border:1.4px solid rgba(255,255,255,.35);border-radius:9px;color:#cdd9e2;font-size:1rem;padding:.4em .55em;cursor:pointer;line-height:1;transition:color .15s,border-color .15s}
+.srch-btn:hover{color:#fff;border-color:rgba(255,255,255,.7)}
+.srch-ov{position:fixed;inset:0;background:rgba(5,17,29,.66);backdrop-filter:blur(3px);display:none;z-index:200;padding:9vh 16px 16px}
+.srch-ov.on{display:block}
+.srch-box{max-width:640px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(3,12,22,.5);overflow:hidden;display:flex;flex-direction:column;max-height:78vh}
+.srch-bar{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line,#e3e9ee)}
+.srch-bar input{flex:1;border:0;outline:0;font:inherit;font-size:1.05rem;color:#20323f;background:none}
+.srch-x{background:none;border:0;font-size:1.6rem;line-height:1;color:#8aa0af;cursor:pointer}
+.srch-ai{padding:14px 16px;background:#f4f8fb;border-bottom:1px solid var(--line,#e3e9ee)}
+.srch-ai-a{color:#14293a;font-size:.98rem;line-height:1.55}
+.srch-ai-l{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.srch-ai-l a{background:#0B2A45;color:#fff;border-radius:999px;padding:.35em .9em;font-size:.85rem;text-decoration:none}
+.srch-ai-p{margin-top:6px}
+.srch-res{overflow:auto}
+.srch-h{padding:10px 16px 4px;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:#8aa0af;font-weight:700}
+.srch-row{display:flex;align-items:center;gap:12px;padding:9px 16px;color:#20323f;text-decoration:none;font-size:.97rem}
+.srch-row:hover{background:#f2f6f9}
+.srch-row img{width:36px;height:36px;object-fit:contain;border-radius:7px;background:#fff;border:1px solid var(--line,#e3e9ee);flex:none}
+.srch-ico{color:#12459B;flex:none}
+.srch-hint{padding:9px 16px;font-size:.8rem;color:#8aa0af;border-top:1px solid var(--line,#e3e9ee)}
+@media(max-width:640px){.srch-ov{padding:0}.srch-box{max-height:100vh;height:100%;border-radius:0}}
+@media(max-width:1280px){.srch-btn{padding:.34em .5em;font-size:.9rem}}
