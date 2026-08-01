@@ -48,13 +48,17 @@
   #newProd{display:none}
   .szbox{grid-column:1 / -1;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
   .szbox h4{font-family:"Barlow Semi Condensed";font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 6px}
-  .szrow{display:grid;grid-template-columns:minmax(96px,1fr) minmax(96px,1fr) minmax(96px,1fr) auto auto;gap:8px;align-items:center;margin-bottom:6px}
-  .szrow .in input{min-width:72px}
-  .szrow .tog{white-space:nowrap;font-size:.72rem}
+  .szfull{grid-column:1/-1;border-top:1px dashed var(--line);padding-top:10px}
+  .szrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px}
+  .szrow input[type=text][data-sz="size"]{flex:1;min-width:150px}
+  .szrow .in{flex:none}
+  .szrow .in input{width:118px;min-width:118px;font-size:.95rem;padding:.5em .55em}
+  .szrow .tog{white-space:nowrap;font-size:.74rem}
+  .szhead{display:flex;gap:10px;color:#8aa0af;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin:4px 0 2px}
+  .szhead b:first-child{flex:1;min-width:150px}.szhead b{width:128px;font-weight:700}
   @media(max-width:860px){
     .prod{grid-template-columns:1fr !important}
     .prod input.pin,.prod textarea.pin,.szrow input{font-size:16px !important;padding:.55em .6em}
-    .szrow{grid-template-columns:1fr;gap:6px;border-bottom:1px dashed var(--line);padding-bottom:8px}
     .szrow .in input{font-size:16px}
     .thbox{max-width:180px}
   }
@@ -419,8 +423,11 @@ function renderProducts(q){
         <label>Unit</label><input class="pin" data-f="unit" value="${escA(pr?pr.unit:"")}">
         <label>Min order qty</label><input class="pin sm" data-f="moq" value="${escA(pr?pr.min_order_qty:"")}">
         <label>UPC / barcode <span style="text-transform:none;letter-spacing:0;color:#8aa0af">(for Google Merchant)</span></label><input class="pin" data-f="upc" inputmode="numeric" placeholder="12-digit UPC" value="${escA(p.upc||"")}">
+      </div>
+      <div class="szfull">
         <div class="szbox">
-          <h4>Container sizes &amp; prices <span style="text-transform:none;letter-spacing:0">(wholesale / retail per container)</span></h4>
+          <h4>Container sizes &amp; prices</h4>
+          <div class="szhead"><b>Size</b><b>Wholesale $</b><b>Retail $</b></div>
           <div class="szrows">${(Array.isArray(p.size_prices)?p.size_prices:(p.size_prices?[p.size_prices]:[])).sort((a,b)=>gal(a.size)-gal(b.size)).map(szRow).join("")}</div>
           <div class="szadd">${szChips(p).map(z=>`<button type="button" data-addsz="${escA(z)}">+ ${esc(z)}</button>`).join("")}<button type="button" data-addsz="">+ Custom size</button></div>
         </div>
