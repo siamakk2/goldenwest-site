@@ -9,7 +9,8 @@
     const t = (k, fb) => (window.GW && GW.i18n && GW.i18n[lang] && GW.i18n[lang][k]) || fb;
 
     const btn = document.createElement("button");
-    btn.className = "srch-btn"; btn.setAttribute("aria-label", "Search"); btn.innerHTML = "&#128269;";
+    btn.className = "srch-btn"; btn.setAttribute("aria-label", "Search");
+    btn.innerHTML = '<span>&#128269;</span><span class="srch-btn-t">' + t("search_btn", "Search") + "</span>";
     right.insertBefore(btn, right.firstChild);
 
     const ov = document.createElement("div");
@@ -293,7 +294,6 @@
     // lang toggle
     $$(".lang button").forEach((b) => b.addEventListener("click", () => {
       lang = b.dataset.lang; localStorage.setItem("gw_lang", lang); applyI18n();
-  initSearch();
     }));
     // mobile nav
     const burger = $("#burger"), nav = $("#nav");
@@ -415,6 +415,7 @@
   document.addEventListener("DOMContentLoaded", async () => {
     initChrome();
     initLightbox();
+    initSearch();
     await loadLive();      // swaps in live catalog if configured; silent fallback otherwise
     applyI18n();
     injectProductSchema();
