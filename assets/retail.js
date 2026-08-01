@@ -239,18 +239,18 @@
     const show = (cls, txt) => { const m = body.querySelector("#m"); m.className = "rt-msg " + cls; m.innerHTML = txt; };
     const zipEl = body.querySelector("#c_zip");
     const updFreight = () => {
-      const f = freightFor(zipEl.value);
+      const s = shippingFor(zipEl.value);
       const fr = body.querySelector("#c_freight"), tot = body.querySelector("#c_total"), btn0 = body.querySelector("#rtPlace");
-      if (f == null) {
-        fr.textContent = zipEl.value.replace(/\D/g, "").length >= 5 ? "quoted after order" : "enter ZIP";
-        fr.style.color = "var(--muted)";
-        tot.textContent = money(subtotal());
-        btn0.textContent = "Place order · " + money(subtotal());
+      if (s.mode === "none") {
+        fr.textContent = "enter ZIP"; fr.style.color = "var(--muted)";
+        tot.textContent = money(subtotal()); btn0.textContent = "Place order \u00b7 " + money(subtotal());
+      } else if (s.mode === "quote") {
+        fr.textContent = "freight \u2014 confirmed within 1 business day"; fr.style.color = "var(--muted)";
+        tot.textContent = money(subtotal()) + " + freight"; btn0.textContent = "Place order \u00b7 " + money(subtotal());
       } else {
-        fr.textContent = f === 0 ? "FREE" : money(f);
-        fr.style.color = f === 0 ? "#1d7a3d" : "var(--ink)";
-        tot.textContent = money(subtotal() + f);
-        btn0.textContent = "Place order · " + money(subtotal() + f);
+        fr.textContent = (s.cents === 0 ? "FREE" : money(s.cents)) + (s.mode === "ups" ? " \u00b7 UPS Ground (est. " + s.lb + " lb)" : "");
+        fr.style.color = s.cents === 0 ? "#1d7a3d" : "var(--ink)";
+        tot.textContent = money(subtotal() + s.cents); btn0.textContent = "Place order \u00b7 " + money(subtotal() + s.cents);
       }
     };
     zipEl.addEventListener("input", updFreight);
