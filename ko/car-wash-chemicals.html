@@ -2,6 +2,12 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
+<!-- Consent Mode v2 defaults — must load ahead of gtag.js. Keep it directly after the charset meta tag. -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+(function(){var d='denied',g='granted',B={ad_storage:d,ad_user_data:d,ad_personalization:d,functionality_storage:d,personalization_storage:d,security_storage:g,wait_for_update:500},m=function(o){var r={},k;for(k in B)r[k]=B[k];for(k in o)r[k]=o[k];return r};
+gtag('consent','default',m({analytics_storage:g}));
+gtag('consent','default',m({analytics_storage:d,region:'AT BE BG HR CY CZ DK EE FI FR DE GR HU IE IT LV LT LU MT NL PL PT RO SK SI ES SE IS LI NO GB CH'.split(' ')}));
+try{var c=JSON.parse(localStorage.getItem('sk_consent_v1'));if(c&&c.v===1&&Date.now()-c.ts<15552e6){var a=c.ads?g:d,n=c.analytics?g:d,f=c.functional?g:d;gtag('consent','update',{ad_storage:a,ad_user_data:a,ad_personalization:a,analytics_storage:n,functionality_storage:f,personalization_storage:f,security_storage:g});}}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>세차 약품 — 제조사 직판 대량 공급 | Golden West, CA</title>
 <meta name="description" content="세차 약품을 제조사에서 직접: 프리소크, 고거품 세제, 트리플폼 왁스, 건조제, 탈지제, 마감 제품까지. 가디나(캘리포니아)의 Golden West Chemical은 1990년부터 세차장·터널·디테일러·차량 관리 업체에 공급합니다. 5–55갤런 및 275갤런 토트." />
@@ -159,5 +165,6 @@
 <script src="/assets/config.js?v=9"></script>
 <script src="/assets/data.js?v=12"></script>
 <script src="/assets/app.js?v=13"></script>
+<script defer src="/consent.js"></script>
 </body>
 </html>
