@@ -89,18 +89,21 @@
   function foam() {
     var host = document.querySelector(".hero") || document.querySelector(".pagehead-hero");
     if (!host) return;
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < 12; i++) {
       var b = document.createElement("span");
       b.className = "fxfoam";
-      var s = 14 + Math.random() * 54;
+      var s = 16 + Math.random() * 60;
       b.style.width = b.style.height = s.toFixed(0) + "px";
-      b.style.left = (4 + Math.random() * 92) + "%";
-      b.style.top = (18 + Math.random() * 70) + "%";
-      b.style.setProperty("--d", (6 + Math.random() * 7).toFixed(1) + "s");
-      b.style.setProperty("--dl", (-Math.random() * 6).toFixed(1) + "s");
-      b.style.opacity = (0.18 + Math.random() * 0.3).toFixed(2);
+      b.style.left = (3 + Math.random() * 94) + "%";
+      b.style.top = (25 + Math.random() * 70) + "%";
+      b.style.setProperty("--d", (5 + Math.random() * 5).toFixed(1) + "s");
+      b.style.setProperty("--dl", (-Math.random() * 8).toFixed(1) + "s");
+      b.style.setProperty("--o", (0.3 + Math.random() * 0.3).toFixed(2));
       host.appendChild(b);
     }
+    var sheen = document.createElement("span");
+    sheen.className = "fxsheen";
+    host.appendChild(sheen);
   }
 
   /* ---- animated stat counters ---- */
@@ -130,7 +133,7 @@
     }
   }
 
-  function init() { stagger(); tilt(); heroDepth(); foam(); countUp(); }
+  function init() { stagger(); tilt(); foam(); countUp(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

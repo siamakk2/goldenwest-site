@@ -376,10 +376,10 @@ html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 {
     radial-gradient(90% 70% at 0% 120%, rgba(224,168,58,.13), transparent 55%),
     url("https://oxbklxjsbljpjzwpizip.supabase.co/storage/v1/object/public/site-assets/hero-home.png");
   background-size:cover;background-position:center;background-repeat:no-repeat;
-  animation:gwKen 32s ease-in-out infinite alternate;will-change:transform}
+  animation:gwKen 14s ease-in-out infinite alternate;will-change:transform}
 .hero::after{z-index:1}
 .hero .wrap{z-index:2}
-@keyframes gwKen{from{transform:scale(1) translate(0,0)}to{transform:scale(1.07) translate(-1.2%,1%)}}
+@keyframes gwKen{from{transform:scale(1.02) translate(0,0)}to{transform:scale(1.18) translate(-2.2%,1.8%)}}
 
 /* landing-page photo heroes: same cinema treatment */
 .pagehead-hero{position:relative;overflow:hidden;background:var(--navy-2)}
@@ -387,21 +387,36 @@ html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 {
   background:
     linear-gradient(100deg,rgba(11,42,69,.86) 0%,rgba(11,42,69,.62) 38%,rgba(11,42,69,.28) 70%,rgba(18,69,155,.18) 100%),
     var(--ph-img) center/cover no-repeat;
-  animation:gwKen 32s ease-in-out infinite alternate;will-change:transform}
+  animation:gwKen 14s ease-in-out infinite alternate;will-change:transform}
 .pagehead-hero>.wrap{position:relative;z-index:2}
 
 /* drifting foam bubbles (injected by fx.js) */
-.fxfoam{position:absolute;z-index:1;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle at 32% 30%, rgba(255,255,255,.55), rgba(255,255,255,.08) 58%, transparent 72%);
-  filter:blur(.5px);animation:gwFloat var(--d,8s) ease-in-out var(--dl,0s) infinite alternate}
-@keyframes gwFloat{from{transform:translate3d(0,14px,0)}to{transform:translate3d(6px,-26px,0)}}
+.fxfoam{position:absolute;z-index:1;border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 32% 30%, rgba(255,255,255,.75), rgba(255,255,255,.12) 58%, transparent 72%);
+  filter:blur(.4px);animation:gwRise var(--d,7s) linear var(--dl,0s) infinite}
+@keyframes gwRise{0%{transform:translate3d(0,10vh,0) scale(.85);opacity:0}
+  15%{opacity:var(--o,.5)}80%{opacity:var(--o,.5)}
+  100%{transform:translate3d(18px,-16vh,0) scale(1.08);opacity:0}}
+.fxsheen{position:absolute;top:-12%;bottom:-12%;width:32%;left:-45%;z-index:1;pointer-events:none;
+  transform:skewX(-18deg);background:linear-gradient(100deg,transparent,rgba(255,255,255,.14) 45%,rgba(224,168,58,.12) 55%,transparent);
+  animation:gwSheen 6.5s ease-in-out 1s infinite}
+@keyframes gwSheen{0%{left:-45%}60%{left:140%}100%{left:140%}}
 
 /* hero drum labels: idle bob on touch devices (pointer parallax handles desktop) */
-@media (hover:none){
-  .labels .label{animation:gwBob 4.6s ease-in-out infinite alternate}
-  .labels .l2{animation-delay:-1.4s}.labels .l3{animation-delay:-2.6s}
-}
-@keyframes gwBob{from{translate:0 0}to{translate:0 -9px}}
+.labels .label{animation:gwBob 3.6s ease-in-out infinite alternate}
+.labels .l2{animation-delay:-1.2s}.labels .l3{animation-delay:-2.4s}
+@keyframes gwBob{from{translate:0 4px}to{translate:0 -14px}}
+/* entrance: content slides up the moment the page loads */
+@keyframes gwUp{from{opacity:0;transform:translateY(34px)}to{opacity:1;transform:none}}
+.hero .hero-eyebrow{animation:gwUp .7s .05s cubic-bezier(.22,.8,.3,1) both}
+.hero h1{animation:gwUp .8s .16s cubic-bezier(.22,.8,.3,1) both}
+.hero .wrap>div>p{animation:gwUp .8s .28s cubic-bezier(.22,.8,.3,1) both}
+.hero .hero-cta{animation:gwUp .8s .4s cubic-bezier(.22,.8,.3,1) both}
+.labels{animation:gwUp .9s .5s cubic-bezier(.22,.8,.3,1) both}
+.pagehead-hero .eyebrow{animation:gwUp .7s .05s cubic-bezier(.22,.8,.3,1) both}
+.pagehead-hero h1{animation:gwUp .8s .16s cubic-bezier(.22,.8,.3,1) both}
+.pagehead-hero>.wrap>p{animation:gwUp .8s .28s cubic-bezier(.22,.8,.3,1) both}
+.pagehead-hero .ph-cta{animation:gwUp .8s .4s cubic-bezier(.22,.8,.3,1) both}
 
 /* deeper, staggered section reveals */
 .reveal{opacity:0;transform:translateY(30px) scale(.985);
@@ -428,7 +443,7 @@ html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 {
 
 /* kill it all for reduced motion */
 @media (prefers-reduced-motion:reduce){
-  .hero::before,.pagehead-hero::before,.fxfoam,.labels .label{animation:none !important}
+  .hero::before,.pagehead-hero::before,.fxfoam,.fxsheen,.labels .label,.labels,.hero h1,.hero .hero-eyebrow,.hero .wrap>div>p,.hero .hero-cta,.pagehead-hero .eyebrow,.pagehead-hero h1,.pagehead-hero>.wrap>p,.pagehead-hero .ph-cta{animation:none !important}
   .reveal{opacity:1;transform:none;transition:none}
   .btn-amber::after{display:none}
 }
