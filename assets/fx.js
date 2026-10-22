@@ -87,18 +87,29 @@
 
   /* ---- foam bubbles drifting in the hero ---- */
   function foam() {
-    var host = document.querySelector(".hero") || document.querySelector(".pagehead-hero");
+    var host = document.querySelector(".hero") || document.querySelector(".pagehead-hero") || document.querySelector(".pagehead");
     if (!host) return;
-    for (var i = 0; i < 12; i++) {
+    var R = function (a, b) { return a + Math.random() * (b - a); };
+    for (var i = 0; i < 14; i++) {
       var b = document.createElement("span");
       b.className = "fxfoam";
-      var s = 16 + Math.random() * 60;
+      var s = R(12, 72);
       b.style.width = b.style.height = s.toFixed(0) + "px";
-      b.style.left = (3 + Math.random() * 94) + "%";
-      b.style.top = (25 + Math.random() * 70) + "%";
-      b.style.setProperty("--d", (5 + Math.random() * 5).toFixed(1) + "s");
-      b.style.setProperty("--dl", (-Math.random() * 8).toFixed(1) + "s");
-      b.style.setProperty("--o", (0.3 + Math.random() * 0.3).toFixed(2));
+      b.style.left = R(2, 96).toFixed(1) + "%";
+      b.style.top = R(8, 85).toFixed(1) + "%";
+      // each bubble gets its own random path — mostly drifting down like spray, some floating up
+      var down = Math.random() < 0.72;
+      var ty0 = down ? -R(6, 14) : R(6, 14);
+      var ty1 = down ? R(8, 18) : -R(8, 18);
+      b.style.setProperty("--y0", ty0.toFixed(1) + "vh");
+      b.style.setProperty("--y1", ty1.toFixed(1) + "vh");
+      b.style.setProperty("--x0", R(-40, 40).toFixed(0) + "px");
+      b.style.setProperty("--x1", R(-55, 55).toFixed(0) + "px");
+      b.style.setProperty("--s0", R(0.6, 1).toFixed(2));
+      b.style.setProperty("--s1", R(0.9, 1.35).toFixed(2));
+      b.style.setProperty("--d", R(5, 13).toFixed(1) + "s");
+      b.style.setProperty("--dl", (-R(0, 12)).toFixed(1) + "s");
+      b.style.setProperty("--o", R(0.25, 0.55).toFixed(2));
       host.appendChild(b);
     }
     var sheen = document.createElement("span");

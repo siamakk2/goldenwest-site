@@ -101,7 +101,7 @@ a.label.l1:hover{transform:rotate(-4deg) translateY(-5px) scale(1.03)}
 a.label.l2:hover{transform:rotate(3.5deg) translateY(-5px) scale(1.03)}
 a.label.l3:hover{transform:rotate(-2deg) translateY(-5px) scale(1.03)}
 /* page-head band for Shop / Wholesale */
-.pagehead{background:linear-gradient(160deg,var(--navy),var(--navy-2));color:#fff;padding:clamp(46px,7vw,84px) 0 clamp(30px,4vw,46px)}
+.pagehead{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--navy),var(--navy-2));color:#fff;padding:clamp(46px,7vw,84px) 0 clamp(30px,4vw,46px)}
 .pagehead .eyebrow{color:var(--amber);letter-spacing:.16em}
 .pagehead h1{font-size:clamp(2.1rem,4.6vw,3.2rem);margin:.3em 0 .35em;max-width:20ch}
 .pagehead p{color:#c8d6e0;max-width:58ch;font-size:1.08rem}
@@ -393,10 +393,10 @@ html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 {
 /* drifting foam bubbles (injected by fx.js) */
 .fxfoam{position:absolute;z-index:1;border-radius:50%;pointer-events:none;opacity:0;
   background:radial-gradient(circle at 32% 30%, rgba(255,255,255,.75), rgba(255,255,255,.12) 58%, transparent 72%);
-  filter:blur(.4px);animation:gwRise var(--d,7s) linear var(--dl,0s) infinite}
-@keyframes gwRise{0%{transform:translate3d(0,10vh,0) scale(.85);opacity:0}
-  15%{opacity:var(--o,.5)}80%{opacity:var(--o,.5)}
-  100%{transform:translate3d(18px,-16vh,0) scale(1.08);opacity:0}}
+  filter:blur(.4px);animation:gwDrift var(--d,8s) ease-in-out var(--dl,0s) infinite}
+@keyframes gwDrift{0%{transform:translate3d(var(--x0,0),var(--y0,-12vh),0) scale(var(--s0,.8));opacity:0}
+  12%{opacity:var(--o,.5)}78%{opacity:var(--o,.5)}
+  100%{transform:translate3d(var(--x1,20px),var(--y1,14vh),0) scale(var(--s1,1.1));opacity:0}}
 .fxsheen{position:absolute;top:-12%;bottom:-12%;width:32%;left:-45%;z-index:1;pointer-events:none;
   transform:skewX(-18deg);background:linear-gradient(100deg,transparent,rgba(255,255,255,.14) 45%,rgba(224,168,58,.12) 55%,transparent);
   animation:gwSheen 6.5s ease-in-out 1s infinite}
@@ -447,3 +447,5 @@ html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 {
   .reveal{opacity:1;transform:none;transition:none}
   .btn-amber::after{display:none}
 }
+
+.pagehead>.wrap{position:relative;z-index:2}
