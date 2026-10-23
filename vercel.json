@@ -61,6 +61,91 @@
       "source": "/product-tag/:path*",
       "destination": "/shop",
       "permanent": true
+    },
+    {
+      "source": "/Waxsoap18a.html",
+      "destination": "/car-wax-compounds-wholesale",
+      "permanent": true
+    },
+    {
+      "source": "/compounds.html",
+      "destination": "/car-wax-compounds-wholesale",
+      "permanent": true
+    },
+    {
+      "source": "/cleaner.html",
+      "destination": "/car-wash-chemicals",
+      "permanent": true
+    },
+    {
+      "source": "/cleaner5.html",
+      "destination": "/car-wash-chemicals",
+      "permanent": true
+    },
+    {
+      "source": "/hand cleaner.html",
+      "destination": "/car-wash-chemicals",
+      "permanent": true
+    },
+    {
+      "source": "/auto care.html",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/tire shine.html",
+      "destination": "/shop?p=tire-shine",
+      "permanent": true
+    },
+    {
+      "source": "/towel.html",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/clay bar.html",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/claypad3.html",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/claypad5.html",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/foam gum.html",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/inerior condioner.html",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/Accessoriespage1.html",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/about us.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/sales order31.html",
+      "destination": "/shop",
+      "permanent": true
+    },
+    {
+      "source": "/sales order42.html",
+      "destination": "/shop",
+      "permanent": true
     }
   ]
 }
