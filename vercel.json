@@ -146,6 +146,91 @@
       "source": "/sales order42.html",
       "destination": "/shop",
       "permanent": true
+    },
+    {
+      "source": "/Waxsoap18a",
+      "destination": "/car-wax-compounds-wholesale",
+      "permanent": true
+    },
+    {
+      "source": "/compounds",
+      "destination": "/car-wax-compounds-wholesale",
+      "permanent": true
+    },
+    {
+      "source": "/cleaner",
+      "destination": "/car-wash-chemicals",
+      "permanent": true
+    },
+    {
+      "source": "/cleaner5",
+      "destination": "/car-wash-chemicals",
+      "permanent": true
+    },
+    {
+      "source": "/hand cleaner",
+      "destination": "/car-wash-chemicals",
+      "permanent": true
+    },
+    {
+      "source": "/auto care",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/tire shine",
+      "destination": "/shop?p=tire-shine",
+      "permanent": true
+    },
+    {
+      "source": "/towel",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/clay bar",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/claypad3",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/claypad5",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/foam gum",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/inerior condioner",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/Accessoriespage1",
+      "destination": "/wholesale-detailing-supplies",
+      "permanent": true
+    },
+    {
+      "source": "/about us",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/sales order31",
+      "destination": "/shop",
+      "permanent": true
+    },
+    {
+      "source": "/sales order42",
+      "destination": "/shop",
+      "permanent": true
     }
   ]
 }
