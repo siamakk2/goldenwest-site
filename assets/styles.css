@@ -449,3 +449,23 @@ html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 {
 }
 
 .pagehead>.wrap{position:relative;z-index:2}
+
+/* ---- company video ---- */
+.vidwrap{display:flex;justify-content:center}
+.vidwrap video{width:min(380px,92vw);max-height:72vh;border-radius:18px;background:#0B2A45;
+  box-shadow:0 24px 60px -24px rgba(11,42,69,.55);border:1px solid var(--line)}
+/* ---- mobile rhythm: kill stacked whitespace ---- */
+@media(max-width:640px){
+  section{padding:34px 0}
+  .seo-body{padding:20px 16px 10px;font-size:1.02rem}
+  .seo-body h2{margin:26px 0 8px}
+  .seo-facts{gap:10px;margin:18px 0}
+  .sec-head{margin-bottom:22px}
+  .pagehead-hero{padding:56px 0 34px}
+  .pagehead{padding:46px 0 28px}
+  .ph-cta{margin-top:16px}
+  .hero .wrap{padding-top:40px;padding-bottom:36px;gap:26px}
+  .trust .wrap{padding:12px 18px;gap:8px 20px}
+  .steps{gap:12px}
+  .ftr .wrap{padding:38px 0 22px;gap:24px}
+}

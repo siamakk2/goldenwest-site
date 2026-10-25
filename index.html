@@ -34,11 +34,14 @@ try{var c=JSON.parse(localStorage.getItem('sk_consent_v1'));if(c&&c.v===1&&Date.
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"VideoObject","name":"Golden West Chemical — Car Wash Chemical Manufacturer in Gardena, CA","description":"A look inside Golden West Chemical: family-owned manufacturer of car wash soaps, presoaks, waxes and detailing supplies in Gardena, California since 1990, supplying car washes, express tunnels, detailers and fleets across Southern California.","thumbnailUrl":"https://www.goldenwestchem.com/media/golden-west-video-poster.jpg","contentUrl":"https://www.goldenwestchem.com/media/golden-west-chemical.mp4","uploadDate":"2026-10-24","duration":"PT42S","publisher":{"@type":"Organization","name":"Golden West Chemical","logo":{"@type":"ImageObject","url":"https://www.goldenwestchem.com/assets/gw-logo@2x.png"}}}
+</script>
 <link rel="icon" href="/favicon.ico" sizes="48x48" />
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/gw-icon-32.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/gw-icon-512.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/gw-icon-180.png" />
-<link rel="stylesheet" href="assets/styles.css?v=19" />
+<link rel="stylesheet" href="assets/styles.css?v=20" />
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -209,6 +212,23 @@ try{var c=JSON.parse(localStorage.getItem('sk_consent_v1'));if(c&&c.v===1&&Date.
   </div>
 </section>
 
+<!-- ============ COMPANY VIDEO ============ -->
+<section id="company-video" style="background:var(--paper)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow" data-i18n="vid_eyebrow">See it made</p>
+      <h2 data-i18n="vid_title">Inside Golden West, in 40 seconds</h2>
+    </div>
+    <div class="vidwrap reveal">
+      <video controls playsinline preload="metadata"
+        poster="/media/golden-west-video-poster.jpg"
+        title="Golden West Chemical — car wash chemical manufacturer in Gardena, California">
+        <source src="/media/golden-west-chemical.mp4" type="video/mp4" />
+      </video>
+    </div>
+  </div>
+</section>
+
 <!-- ============ FAQ ============ -->
 <section id="faq">
   <div class="wrap">
@@ -280,7 +300,7 @@ try{var c=JSON.parse(localStorage.getItem('sk_consent_v1'));if(c&&c.v===1&&Date.
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/config.js?v=9"></script>
-<script src="assets/data.js?v=13"></script>
+<script src="assets/data.js?v=14"></script>
 <script src="assets/app.js?v=13"></script>
 <script>document.getElementById("yr").textContent=new Date().getFullYear();</script>
 <script defer src="/consent.js"></script>

@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   } catch { /* fall through — static pages still ship */ }
 
   const staticPages = [
-    { loc: HOST + "/", changefreq: "weekly", priority: "1.0", lastmod: newest },
+    { loc: HOST + "/", changefreq: "weekly", priority: "1.0", lastmod: newest, video: true },
     { loc: HOST + "/shop", changefreq: "daily", priority: "0.9", lastmod: newest },
     { loc: HOST + "/wholesale", changefreq: "monthly", priority: "0.8", lastmod: null },
     { loc: HOST + "/contact", changefreq: "yearly", priority: "0.6", lastmod: null },
@@ -67,18 +67,27 @@ export default async function handler(req, res) {
     )
     .map((u) => {
       const lm = u.lastmod ? day(u.lastmod) : null;
+      const vid = u.video
+        ? "<video:video><video:thumbnail_loc>" + HOST + "/media/golden-west-video-poster.jpg</video:thumbnail_loc>" +
+          "<video:title>Golden West Chemical \u2014 Car Wash Chemical Manufacturer in Gardena, CA</video:title>" +
+          "<video:description>Inside Golden West Chemical: family-owned manufacturer of car wash soaps, presoaks, waxes and detailing supplies in Gardena, California since 1990.</video:description>" +
+          "<video:content_loc>" + HOST + "/media/golden-west-chemical.mp4</video:content_loc>" +
+          "<video:duration>42</video:duration>" +
+          "<video:publication_date>2026-10-24</video:publication_date>" +
+          "<video:family_friendly>yes</video:family_friendly></video:video>"
+        : "";
       return (
         "  <url><loc>" + esc(u.loc) + "</loc>" +
         (lm ? "<lastmod>" + lm + "</lastmod>" : "") +
         "<changefreq>" + u.changefreq + "</changefreq>" +
-        "<priority>" + u.priority + "</priority></url>"
+        "<priority>" + u.priority + "</priority>" + vid + "</url>"
       );
     })
     .join("\n");
 
   const xml =
     '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">\n' +
     urls +
     "\n</urlset>\n";
 
