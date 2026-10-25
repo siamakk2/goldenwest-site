@@ -450,11 +450,31 @@ html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 {
 
 .pagehead>.wrap{position:relative;z-index:2}
 
-/* ---- company video ---- */
-.vidwrap{display:flex;justify-content:center}
-.vidwrap video{width:min(380px,92vw);max-height:72vh;border-radius:18px;background:#0B2A45;
-  box-shadow:0 24px 60px -24px rgba(11,42,69,.55);border:1px solid var(--line)}
+/* ---- company video showcase ---- */
+.vidsec{background:linear-gradient(150deg,var(--navy) 0%,var(--navy-2) 70%,#123a5e 100%);color:#fff;position:relative;overflow:hidden}
+.vidsec::after{content:"";position:absolute;inset:0;opacity:.4;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1.4px);background-size:22px 22px}
+.vidgrid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(32px,5vw,64px);align-items:center;position:relative;z-index:1}
+.vidcopy .eyebrow{color:var(--amber);letter-spacing:.16em}
+.vidcopy h2{font-size:clamp(1.9rem,3.6vw,2.75rem);color:#fff;margin:.28em 0 .4em}
+.vidbody{color:#c8d6e0;font-size:1.08rem;line-height:1.65;max-width:52ch;margin:0 0 1.2em}
+.vidpts{list-style:none;margin:0 0 1.6em;padding:0;display:grid;gap:11px}
+.vidpts li{display:flex;align-items:flex-start;gap:11px;color:#e6eef5;font-size:1.02rem}
+.vidpts li span{flex:none;width:22px;height:22px;border-radius:50%;background:var(--amber);color:var(--navy);
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;margin-top:1px}
+.vidpts li em{font-style:normal}
+.vidwrap{display:flex;justify-content:center;position:relative}
+.vidwrap::before{content:"";position:absolute;width:120%;height:86%;top:7%;left:-10%;
+  background:radial-gradient(45% 45% at 60% 45%, rgba(224,168,58,.22), transparent 70%),
+             radial-gradient(40% 40% at 35% 65%, rgba(58,138,224,.25), transparent 70%);filter:blur(10px)}
+.vidwrap video{position:relative;width:min(330px,86vw);max-height:68vh;border-radius:26px;background:#061827;
+  border:6px solid rgba(255,255,255,.1);box-shadow:0 34px 80px -28px rgba(2,10,20,.85)}
 /* ---- mobile rhythm: kill stacked whitespace ---- */
+@media(max-width:900px){
+  .vidgrid{grid-template-columns:1fr;gap:30px}
+  .vidcopy{text-align:left}
+  .vidwrap video{max-height:62vh}
+}
 @media(max-width:640px){
   section{padding:34px 0}
   .seo-body{padding:20px 16px 10px;font-size:1.02rem}

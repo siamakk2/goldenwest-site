@@ -41,7 +41,7 @@ try{var c=JSON.parse(localStorage.getItem('sk_consent_v1'));if(c&&c.v===1&&Date.
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/gw-icon-32.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/gw-icon-512.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/gw-icon-180.png" />
-<link rel="stylesheet" href="assets/styles.css?v=21" />
+<link rel="stylesheet" href="assets/styles.css?v=22" />
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -213,11 +213,21 @@ try{var c=JSON.parse(localStorage.getItem('sk_consent_v1'));if(c&&c.v===1&&Date.
 </section>
 
 <!-- ============ COMPANY VIDEO ============ -->
-<section id="company-video" style="background:var(--paper)">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <p class="eyebrow" data-i18n="vid_eyebrow">See it made</p>
-      <h2 data-i18n="vid_title">Inside Golden West, in 40 seconds</h2>
+<section id="company-video" class="vidsec">
+  <div class="wrap vidgrid">
+    <div class="vidcopy reveal">
+      <p class="eyebrow" data-i18n="vid_eyebrow">The 40-second answer</p>
+      <h2 data-i18n="vid_title">Who actually makes your soap?</h2>
+      <p class="vidbody" data-i18n="vid_body">Most car washes buy from distributors reselling someone else's blend. This is the difference: Golden West formulates and manufactures its own line in Gardena, California — and has since 1990.</p>
+      <ul class="vidpts">
+        <li><span>&#10003;</span><em data-i18n="vid_li1">Formulated in-house by a chemical engineer</em></li>
+        <li><span>&#10003;</span><em data-i18n="vid_li2">295 products at factory-direct pricing</em></li>
+        <li><span>&#10003;</span><em data-i18n="vid_li3">Delivered across Southern California — drums ship nationwide</em></li>
+      </ul>
+      <div class="hero-cta">
+        <a href="/wholesale" class="btn btn-amber" data-i18n="hero_cta1">Request wholesale pricing</a>
+        <a href="/shop" class="btn btn-ghost" data-i18n="hero_cta2">Browse products</a>
+      </div>
     </div>
     <div class="vidwrap reveal">
       <video controls playsinline preload="metadata"
@@ -300,7 +310,7 @@ try{var c=JSON.parse(localStorage.getItem('sk_consent_v1'));if(c&&c.v===1&&Date.
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/config.js?v=9"></script>
-<script src="assets/data.js?v=14"></script>
+<script src="assets/data.js?v=15"></script>
 <script src="assets/app.js?v=13"></script>
 <script>document.getElementById("yr").textContent=new Date().getFullYear();</script>
 <script defer src="/consent.js"></script>
