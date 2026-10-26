@@ -534,3 +534,9 @@ html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] h4 {
   .gwc-launch{left:12px;bottom:12px;padding:.65em 1em;font-size:.9rem}
 }
 @media(prefers-reduced-motion:reduce){.gwc-dot,.gwc-think i{animation:none}}
+
+/* ---- manufacturing quicklinks ---- */
+.quicklinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.quicklinks a{border:1.5px solid var(--navy);color:var(--navy);border-radius:999px;padding:.5em 1.15em;
+  font-family:var(--font-d);font-weight:600;font-size:.95rem;text-decoration:none;transition:.15s}
+.quicklinks a:hover{background:var(--navy);color:#fff}

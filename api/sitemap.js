@@ -38,6 +38,7 @@ export default async function handler(req, res) {
     { loc: HOST + "/touchless-tunnel-car-wash-chemicals", changefreq: "monthly", priority: "0.8", lastmod: null },
     { loc: HOST + "/wholesale-car-wash-chemicals", changefreq: "monthly", priority: "0.8", lastmod: null },
     { loc: HOST + "/car-wax-compounds-wholesale", changefreq: "monthly", priority: "0.8", lastmod: null },
+    { loc: HOST + "/car-wash-supply-store-gardena", changefreq: "monthly", priority: "0.8", lastmod: null },
     { loc: HOST + "/es/wholesale-car-wash-chemicals", changefreq: "monthly", priority: "0.7", lastmod: null },
     { loc: HOST + "/ko/wholesale-car-wash-chemicals", changefreq: "monthly", priority: "0.7", lastmod: null },
     { loc: HOST + "/es/car-wash-chemicals", changefreq: "monthly", priority: "0.7", lastmod: null },
