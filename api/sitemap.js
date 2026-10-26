@@ -73,7 +73,7 @@ export default async function handler(req, res) {
           "<video:description>Inside Golden West Chemical: family-owned manufacturer of car wash soaps, presoaks, waxes and detailing supplies in Gardena, California since 1990.</video:description>" +
           "<video:content_loc>" + HOST + "/media/golden-west-chemical.mp4</video:content_loc>" +
           "<video:duration>42</video:duration>" +
-          "<video:publication_date>2026-10-24</video:publication_date>" +
+          "<video:publication_date>2026-10-24T10:00:00-07:00</video:publication_date>" +
           "<video:family_friendly>yes</video:family_friendly></video:video>"
         : "";
       return (
